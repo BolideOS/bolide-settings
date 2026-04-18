@@ -73,6 +73,7 @@ Item {
             width: parent.width
             height: Dims.l(12)
             font.pixelSize: Dims.l(6)
+            font.family: "Roboto Condensed"
             verticalAlignment: Text.AlignBottom
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap

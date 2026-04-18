@@ -586,6 +586,11 @@
         <source>Configure in Workout app settings</source>
         <translation>在运动应用设置中配置</translation>
     </message>
+    <message id="id-battery-charge">
+        <location filename="../src/qml/PowerManagerPage.qml" line="419"/>
+        <source>Battery Charge</source>
+        <translation type="unfinished">Battery Charge</translation>
+    </message>
 </context>
 <context>
     <name>AboutPage</name>
@@ -684,6 +689,11 @@
     <message>
         <source>%L1 MB (%L2 %)</source>
         <translation>%L1 MB (%L2 %)</translation>
+    </message>
+    <message id="id-battery-charge">
+        <location filename="../src/qml/PowerManagerPage.qml" line="419"/>
+        <source>Battery Charge</source>
+        <translation type="unfinished">Battery Charge</translation>
     </message>
 </context>
 </TS>

@@ -232,6 +232,7 @@ Item {
             //% "Loading..."
             text: qsTrId("id-loading")
             font.pixelSize: Dims.l(6)
+            font.family: "Roboto Condensed"
             opacity: 0.6
         }
     }
@@ -263,6 +264,7 @@ Item {
                 //% "Sensors"
                 text: qsTrId("id-sensors")
                 font.pixelSize: Dims.l(6)
+                font.family: "Roboto Condensed"
                 opacity: 0.8
             }
 
@@ -401,6 +403,7 @@ Item {
                 //% "Radios"
                 text: qsTrId("id-radios")
                 font.pixelSize: Dims.l(6)
+                font.family: "Roboto Condensed"
                 opacity: 0.8
             }
 
@@ -521,6 +524,7 @@ Item {
                 //% "System"
                 text: qsTrId("id-system")
                 font.pixelSize: Dims.l(6)
+                font.family: "Roboto Condensed"
                 opacity: 0.8
             }
 
@@ -584,6 +588,7 @@ Item {
                 //% "Automation"
                 text: qsTrId("id-automation")
                 font.pixelSize: Dims.l(6)
+                font.family: "Roboto Condensed"
                 opacity: 0.8
             }
 
@@ -632,6 +637,7 @@ Item {
                     //% "Delete Profile"
                     text: qsTrId("id-delete-profile")
                     font.pixelSize: Dims.l(6)
+                    font.family: "Roboto Condensed"
                     color: "#F44336"
                 }
 

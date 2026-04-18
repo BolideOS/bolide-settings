@@ -84,6 +84,7 @@ Item {
                 //% "Brightness"
                 text: qsTrId("id-brightness")
                 font.pixelSize: Dims.l(6)
+                font.family: "Roboto Condensed"
                 verticalAlignment: Text.AlignBottom
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.Wrap

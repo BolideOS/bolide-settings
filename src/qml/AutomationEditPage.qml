@@ -94,6 +94,7 @@ Item {
                 //% "Battery Rules"
                 text: qsTrId("id-battery-rules")
                 font.pixelSize: Dims.l(6)
+                font.family: "Roboto Condensed"
                 opacity: 0.8
             }
 
@@ -105,6 +106,7 @@ Item {
                 //% "Switch profile when battery reaches threshold"
                 text: qsTrId("id-battery-rules-desc")
                 font.pixelSize: Dims.l(3)
+                font.family: "Roboto Condensed"
                 color: "#80FFFFFF"
                 wrapMode: Text.WordWrap
                 padding: Dims.w(4)
@@ -170,6 +172,7 @@ Item {
                 //% "Time Rules"
                 text: qsTrId("id-time-rules")
                 font.pixelSize: Dims.l(6)
+                font.family: "Roboto Condensed"
                 opacity: 0.8
             }
 
@@ -181,6 +184,7 @@ Item {
                 //% "Switch profile during time window"
                 text: qsTrId("id-time-rules-desc")
                 font.pixelSize: Dims.l(3)
+                font.family: "Roboto Condensed"
                 color: "#80FFFFFF"
                 wrapMode: Text.WordWrap
                 padding: Dims.w(4)
@@ -246,6 +250,7 @@ Item {
                 //% "Workout Profiles"
                 text: qsTrId("id-workout-profiles")
                 font.pixelSize: Dims.l(6)
+                font.family: "Roboto Condensed"
                 opacity: 0.8
             }
 
@@ -257,6 +262,7 @@ Item {
                 //% "Assign profile for each workout type"
                 text: qsTrId("id-workout-profiles-desc")
                 font.pixelSize: Dims.l(3)
+                font.family: "Roboto Condensed"
                 color: "#80FFFFFF"
                 wrapMode: Text.WordWrap
                 padding: Dims.w(4)
@@ -268,6 +274,7 @@ Item {
                 //% "Configure in Workout app settings"
                 text: qsTrId("id-workout-configure-in-app")
                 font.pixelSize: Dims.l(3)
+                font.family: "Roboto Condensed"
                 color: "#80FFFFFF"
                 wrapMode: Text.WordWrap
                 padding: Dims.w(4)
@@ -299,6 +306,7 @@ Item {
                     //% "Save"
                     text: qsTrId("id-save")
                     font.pixelSize: Dims.l(6)
+                    font.family: "Roboto Condensed"
                 }
             }
 

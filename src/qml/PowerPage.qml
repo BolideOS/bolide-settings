@@ -36,24 +36,19 @@ Item {
 
     }
 
-    ListView {
+    SnapListView {
         id: powerItems
         model: powerModel
-        anchors {
-            top: parent.top
-            topMargin: pageHeader.height
-        }
-        height: parent.height
-        width: parent.width
-        delegate: ListItem {
-            title: text
-            iconName: icon
-            HighlightBar {
-                onClicked: {
-                    pendingIndex = index
-                    remorse.action = text
-                    remorse.start()
-                }
+        anchors.fill: parent
+
+        delegate: CompactListItem {
+            title: model.text
+            iconName: model.icon
+            highlight: ListView.isCurrentItem
+            onClicked: {
+                pendingIndex = index
+                remorse.action = model.text
+                remorse.start()
             }
         }
     }

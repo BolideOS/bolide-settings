@@ -18,58 +18,18 @@
 
 import QtQuick 2.9
 import Nemo.DBus 2.0
+import Nemo.Configuration 1.0
 import org.asteroid.controls 1.0
+import org.asteroid.utils 1.0
 
 Item {
     id: root
     property var pop
 
-    ListModel {
-        id: usbModesModel
-        //% "Charging only"
-        ListElement { title: qsTrId("id-charging-only"); mode: "charging_only" }
-        //% "ADB Mode"
-        ListElement { title: qsTrId("id-adb-mode"); mode: "adb_mode" }
-        //% "SSH Mode"
-        ListElement { title: qsTrId("id-ssh-mode"); mode: "developer_mode" }
-        //% "MTP Mode"
-        ListElement { title: qsTrId("id-mtp-mode"); mode: "mtp_mode" }
-    }
-
-    Spinner {
-        id: usbModeLV
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: title.bottom
-        height: Dims.h(60)
-        model: usbModesModel
-
-        delegate: SpinnerDelegate { text: title }
-    }
-
-    IconButton {
-        iconName: "ios-checkmark-circle-outline"
-        anchors { 
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-            bottomMargin: Dims.iconButtonMargin
-        }
-
-        onClicked: {
-            usbmodedDbus.call("set_mode", [usbModesModel.get(usbModeLV.currentIndex).mode])
-            usbmodedDbus.call("set_config", [usbModesModel.get(usbModeLV.currentIndex).mode])
-
-            root.pop();
-        }
-    }
-
-    Component.onCompleted: {
-        usbmodedDbus.typedCall('get_config', [], function (mode) {
-            if     (mode === "mtp_mode")       usbModeLV.positionViewAtIndex(3, ListView.SnapPosition)
-            else if(mode === "developer_mode") usbModeLV.positionViewAtIndex(2, ListView.SnapPosition)
-            else if(mode === "adb_mode")       usbModeLV.positionViewAtIndex(1, ListView.SnapPosition)
-            else  /*mode === "charging_only"*/ usbModeLV.positionViewAtIndex(0, ListView.SnapPosition)
-        });
+    ConfigurationValue {
+        id: savedMode
+        key: "/org/bolideos/settings/usb-mode"
+        defaultValue: "charging_only"
     }
 
     DBusInterface {
@@ -80,9 +40,55 @@ Item {
         iface: "com.meego.usb_moded"
     }
 
-    PageHeader {
-        id: title
-        text: qsTrId("id-usb-page")
+    function modeToIndex(mode) {
+        if (mode === "mtp_mode")       return 3
+        if (mode === "developer_mode") return 2
+        if (mode === "adb_mode")       return 1
+        return 0
+    }
+
+    SnapListView {
+        id: usbModeList
+        anchors.fill: parent
+
+        model: ListModel { id: modesModel }
+
+        delegate: CompactListItem {
+            title: model.title
+            iconName: model.iconName
+            highlight: ListView.isCurrentItem
+            onClicked: {
+                usbModeList.currentIndex = index
+                var mode = modesModel.get(index).mode
+                savedMode.value = mode
+                usbmodedDbus.call("set_mode", [mode])
+                usbmodedDbus.call("set_config", [mode])
+                root.pop()
+            }
+        }
+
+        Component.onCompleted: {
+            //% "Charging only"
+            modesModel.append({title: qsTrId("id-charging-only"), mode: "charging_only", iconName: "ios-flash-outline"})
+            //% "ADB Mode"
+            modesModel.append({title: qsTrId("id-adb-mode"), mode: "adb_mode", iconName: "ios-bug-outline"})
+            //% "SSH Mode"
+            modesModel.append({title: qsTrId("id-ssh-mode"), mode: "developer_mode", iconName: "ios-code-working"})
+            //% "MTP Mode"
+            modesModel.append({title: qsTrId("id-mtp-mode"), mode: "mtp_mode", iconName: "ios-folder-open"})
+
+            // Try D-Bus first, fall back to saved config
+            usbmodedDbus.typedCall('get_config', [], function (mode) {
+                var idx = modeToIndex(mode)
+                usbModeList.positionViewAtIndex(idx, ListView.Center)
+                usbModeList.currentIndex = idx
+            }, function () {
+                // D-Bus unavailable — use locally saved mode
+                var idx = modeToIndex(savedMode.value)
+                usbModeList.positionViewAtIndex(idx, ListView.Center)
+                usbModeList.currentIndex = idx
+            })
+        }
     }
 }
 

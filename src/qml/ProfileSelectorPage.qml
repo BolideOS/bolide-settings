@@ -69,44 +69,25 @@ Item {
         }
     }
 
-    ListView {
+    SnapListView {
         id: profileListView
         anchors.fill: parent
-        anchors.topMargin: Dims.h(15)
-        anchors.bottomMargin: Dims.h(5)
         model: profilesModel
-        clip: true
-        spacing: 0
 
-        delegate: Item {
-            width: parent.width
-            height: listItem.height
+        delegate: CompactListItem {
+            title: model.name
+            iconName: model.icon || "ios-battery-full"
+            highlight: ListView.isCurrentItem
 
-            property bool isActive: model.id === activeProfileId
-
-            ListItem {
-                id: listItem
-                height: Dims.h(15)
-                width: parent.width
-                title: model.name
-                iconName: model.icon || "ios-battery-full"
-
-                onClicked: {
-                    powerd.typedCall("SetActiveProfile",
-                        [{"type": "s", "value": model.id}],
-                        function(success) {
-                            if (success) {
-                                activeProfileId = model.id
-                                layerStack.pop(root)
-                            }
-                        }, powerd.handleError)
-                }
-            }
-
-            RowSeparator {
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
+            onClicked: {
+                powerd.typedCall("SetActiveProfile",
+                    [{"type": "s", "value": model.id}],
+                    function(success) {
+                        if (success) {
+                            activeProfileId = model.id
+                            layerStack.pop(root)
+                        }
+                    }, powerd.handleError)
             }
         }
 
@@ -127,6 +108,7 @@ Item {
                     //% "No profiles available"
                     text: qsTrId("id-no-profiles")
                     font.pixelSize: Dims.l(6)
+                    font.family: "Roboto Condensed"
                     wrapMode: Text.WordWrap
                 }
 
@@ -136,6 +118,7 @@ Item {
                     //% "Service may be unavailable"
                     text: qsTrId("id-service-may-be-unavailable")
                     font.pixelSize: Dims.l(4)
+                    font.family: "Roboto Condensed"
                     opacity: 0.6
                     wrapMode: Text.WordWrap
                 }

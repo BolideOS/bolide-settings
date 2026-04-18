@@ -676,6 +676,11 @@
         <source>Configure in Workout app settings</source>
         <translation>Configurer dans les paramètres de l&apos;app Entraînement</translation>
     </message>
+    <message id="id-battery-charge">
+        <location filename="../src/qml/PowerManagerPage.qml" line="419"/>
+        <source>Battery Charge</source>
+        <translation type="unfinished">Battery Charge</translation>
+    </message>
 </context>
 <context>
     <name>AboutPage</name>
@@ -798,6 +803,11 @@
         <location filename="../src/qml/AboutPage.qml" line="97"/>
         <source>Qt version</source>
         <translation>Version de Qt</translation>
+    </message>
+    <message id="id-battery-charge">
+        <location filename="../src/qml/PowerManagerPage.qml" line="419"/>
+        <source>Battery Charge</source>
+        <translation type="unfinished">Battery Charge</translation>
     </message>
 </context>
 </TS>

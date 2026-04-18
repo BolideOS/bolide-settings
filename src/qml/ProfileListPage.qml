@@ -74,39 +74,28 @@ Item {
         ProfileEditPage {}
     }
 
-    ListView {
+    SnapListView {
         id: profileListView
         anchors.fill: parent
-        anchors.topMargin: Dims.h(15)
-        anchors.bottomMargin: Dims.h(5)
         model: profilesModel
-        clip: true
-        spacing: 0
 
-        delegate: Item {
-            width: parent.width
-            height: listItem.height
+        delegate: CompactListItem {
+            title: model.name
+            iconName: model.icon || "ios-battery-full"
+            highlight: ListView.isCurrentItem
 
-            property bool isActive: model.id === activeProfileId
             property bool isBuiltin: model.builtin === true
 
-            ListItem {
-                id: listItem
-                height: Dims.h(15)
-                width: parent.width
-                title: model.name
-                iconName: model.icon || "ios-battery-full"
-
-                onClicked: {
-                    layerStack.push(profileEditLayer, {profileId: model.id})
-                }
+            onClicked: {
+                profilesList.currentIndex = index
+                layerStack.push(profileEditLayer, {profileId: model.id})
             }
 
             MouseArea {
-                anchors.fill: listItem
+                anchors.fill: parent
                 onPressAndHold: {
-                    if (!isBuiltin) {
-                        deleteRemorse.execute(listItem, "", function() {
+                    if (!parent.isBuiltin) {
+                        deleteRemorse.execute(parent, "", function() {
                             powerd.typedCall("DeleteProfile",
                                 [{"type": "s", "value": model.id}],
                                 function(success) {
@@ -117,41 +106,22 @@ Item {
                         })
                     }
                 }
-                onClicked: listItem.clicked()
+                onClicked: parent.clicked()
             }
 
             RemorseTimer {
                 id: deleteRemorse
             }
-
-            RowSeparator {
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-            }
         }
 
-        footer: Item {
-            width: parent.width
-            height: addButton.height + Dims.h(5)
+        footer: CompactListItem {
+            //% "Add New Profile"
+            title: qsTrId("id-add-new-profile")
+            iconName: "ios-add-circle-outline"
+            highlight: false
 
-            ListItem {
-                id: addButton
-                height: Dims.h(15)
-                width: parent.width
-                //% "Add New Profile"
-                title: qsTrId("id-add-new-profile")
-                iconName: "ios-add-circle-outline"
-
-                onClicked: {
-                    layerStack.push(profileEditLayer, {profileId: "", isNewProfile: true})
-                }
-            }
-
-            RowSeparator {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
+            onClicked: {
+                layerStack.push(profileEditLayer, {profileId: "", isNewProfile: true})
             }
         }
 
@@ -172,6 +142,7 @@ Item {
                     //% "No profiles available"
                     text: qsTrId("id-no-profiles")
                     font.pixelSize: Dims.l(6)
+                    font.family: "Roboto Condensed"
                     wrapMode: Text.WordWrap
                 }
 
@@ -181,6 +152,7 @@ Item {
                     //% "Service may be unavailable"
                     text: qsTrId("id-service-may-be-unavailable")
                     font.pixelSize: Dims.l(4)
+                    font.family: "Roboto Condensed"
                     opacity: 0.6
                     wrapMode: Text.WordWrap
                 }

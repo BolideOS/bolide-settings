@@ -484,12 +484,84 @@ Item {
                 property int visualIndex: index
                 property bool isDragging: index === draggedItemIndex
 
-                HighlightBar {
-                    id: pressHighlight
-                    anchors.fill: parent
+                // Gradient highlight — left half (icon area)
+                LinearGradient {
+                    anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: iconRectangle.right }
                     visible: type === "toggle"
                     z: -1
-                    forceOn: dragArea.pressed
+                    opacity: dragArea.pressed ? 1.0 : 0.0
+                    start: Qt.point(width, 0); end: Qt.point(0, 0)
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#CC1785DD" }
+                        GradientStop { position: 0.3; color: "#CC1785DD" }
+                        GradientStop { position: 1.0; color: "#00000000" }
+                    }
+                    Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
+                }
+                // Gradient highlight — right half (label area)
+                LinearGradient {
+                    anchors { top: parent.top; bottom: parent.bottom; left: iconRectangle.right; right: parent.right }
+                    visible: type === "toggle"
+                    z: -1
+                    opacity: dragArea.pressed ? 1.0 : 0.0
+                    start: Qt.point(0, 0); end: Qt.point(width, 0)
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#CC1785DD" }
+                        GradientStop { position: 0.3; color: "#CC1785DD" }
+                        GradientStop { position: 1.0; color: "#00000000" }
+                    }
+                    Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
+                }
+
+                // Top border — fades from icon outward
+                LinearGradient {
+                    height: 1; anchors { top: parent.top; left: parent.left; right: iconRectangle.right }
+                    visible: type === "toggle"; z: 0
+                    opacity: dragArea.pressed ? 1.0 : 0.0
+                    start: Qt.point(width, 0); end: Qt.point(0, 0)
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#88FFFFFF" }
+                        GradientStop { position: 0.3; color: "#88FFFFFF" }
+                        GradientStop { position: 1.0; color: "#00FFFFFF" }
+                    }
+                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                }
+                LinearGradient {
+                    height: 1; anchors { top: parent.top; left: iconRectangle.right; right: parent.right }
+                    visible: type === "toggle"; z: 0
+                    opacity: dragArea.pressed ? 1.0 : 0.0
+                    start: Qt.point(0, 0); end: Qt.point(width, 0)
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#88FFFFFF" }
+                        GradientStop { position: 0.3; color: "#88FFFFFF" }
+                        GradientStop { position: 1.0; color: "#00FFFFFF" }
+                    }
+                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                }
+                // Bottom border — fades from icon outward
+                LinearGradient {
+                    height: 1; anchors { bottom: parent.bottom; left: parent.left; right: iconRectangle.right }
+                    visible: type === "toggle"; z: 0
+                    opacity: dragArea.pressed ? 1.0 : 0.0
+                    start: Qt.point(width, 0); end: Qt.point(0, 0)
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#88FFFFFF" }
+                        GradientStop { position: 0.3; color: "#88FFFFFF" }
+                        GradientStop { position: 1.0; color: "#00FFFFFF" }
+                    }
+                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                }
+                LinearGradient {
+                    height: 1; anchors { bottom: parent.bottom; left: iconRectangle.right; right: parent.right }
+                    visible: type === "toggle"; z: 0
+                    opacity: dragArea.pressed ? 1.0 : 0.0
+                    start: Qt.point(0, 0); end: Qt.point(width, 0)
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#88FFFFFF" }
+                        GradientStop { position: 0.3; color: "#88FFFFFF" }
+                        GradientStop { position: 1.0; color: "#00FFFFFF" }
+                    }
+                    Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
 
                 Label {
@@ -497,6 +569,7 @@ Item {
                     text: labelText
                     color: "#ffffff"
                     font.pixelSize: Dims.l(6)
+                    font.family: "Roboto Condensed"
                     font.italic: true
                     anchors {
                         horizontalCenter: parent.horizontalCenter
@@ -606,6 +679,7 @@ Item {
 
                 Label {
                     text: toggle ? toggle.name : null
+                    renderType: Text.NativeRendering
                     color: "#ffffff"
                     opacity: toggleId ? (toggleEnabled.value[toggleId] ? 1.0 : 0.6) : 0;
                     visible: type === "toggle" && toggleId !== "" && !isDragging
@@ -615,8 +689,10 @@ Item {
                         leftMargin: Dims.l(4)
                     }
                     font {
-                        pixelSize: Dims.l(8)
-                        styleName: "Light"
+                        pixelSize: Dims.l(9)
+                        family: "Roboto Condensed"
+                        weight: Font.Normal
+                        letterSpacing: -0.5
                     }
                 }
 
@@ -821,9 +897,64 @@ Item {
         property string text: ""
         property string icon: ""
 
-        HighlightBar {
-            anchors.fill: parent
-            forceOn: dragProxy.visible
+        // Gradient highlight — left half
+        LinearGradient {
+            anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: dragIconRect.right }
+            start: Qt.point(width, 0); end: Qt.point(0, 0)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#CC1785DD" }
+                GradientStop { position: 0.3; color: "#CC1785DD" }
+                GradientStop { position: 1.0; color: "#00000000" }
+            }
+        }
+        // Gradient highlight — right half
+        LinearGradient {
+            anchors { top: parent.top; bottom: parent.bottom; left: dragIconRect.right; right: parent.right }
+            start: Qt.point(0, 0); end: Qt.point(width, 0)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#CC1785DD" }
+                GradientStop { position: 0.3; color: "#CC1785DD" }
+                GradientStop { position: 1.0; color: "#00000000" }
+            }
+        }
+
+        // Top border — drag proxy
+        LinearGradient {
+            height: 1; anchors { top: parent.top; left: parent.left; right: dragIconRect.right }
+            start: Qt.point(width, 0); end: Qt.point(0, 0)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#88FFFFFF" }
+                GradientStop { position: 0.3; color: "#88FFFFFF" }
+                GradientStop { position: 1.0; color: "#00FFFFFF" }
+            }
+        }
+        LinearGradient {
+            height: 1; anchors { top: parent.top; left: dragIconRect.right; right: parent.right }
+            start: Qt.point(0, 0); end: Qt.point(width, 0)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#88FFFFFF" }
+                GradientStop { position: 0.3; color: "#88FFFFFF" }
+                GradientStop { position: 1.0; color: "#00FFFFFF" }
+            }
+        }
+        // Bottom border — drag proxy
+        LinearGradient {
+            height: 1; anchors { bottom: parent.bottom; left: parent.left; right: dragIconRect.right }
+            start: Qt.point(width, 0); end: Qt.point(0, 0)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#88FFFFFF" }
+                GradientStop { position: 0.3; color: "#88FFFFFF" }
+                GradientStop { position: 1.0; color: "#00FFFFFF" }
+            }
+        }
+        LinearGradient {
+            height: 1; anchors { bottom: parent.bottom; left: dragIconRect.right; right: parent.right }
+            start: Qt.point(0, 0); end: Qt.point(width, 0)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#88FFFFFF" }
+                GradientStop { position: 0.3; color: "#88FFFFFF" }
+                GradientStop { position: 1.0; color: "#00FFFFFF" }
+            }
         }
 
         Rectangle {
@@ -850,6 +981,7 @@ Item {
 
         Label {
             text: dragProxy.text
+            renderType: Text.NativeRendering
             color: "#ffffff"
             opacity: 0.9
             anchors {
@@ -858,8 +990,10 @@ Item {
                 leftMargin: Dims.l(4)
             }
             font {
-                pixelSize: Dims.l(8)
-                styleName: "Light"
+                pixelSize: Dims.l(9)
+                family: "Roboto Condensed"
+                weight: Font.Normal
+                letterSpacing: -0.5
             }
         }
     }

@@ -31,6 +31,7 @@ Canvas {
     property real currentLevel: 0
     property real drainRatePerHour: 0
     property bool isCharging: false
+    property string titleText: ""
 
     onHistoryDataChanged: requestPaint()
     onCurrentLevelChanged: requestPaint()
@@ -46,8 +47,19 @@ Canvas {
 
         var leftPad   = width * 0.10
         var rightPad  = width * 0.03
-        var topPad    = height * 0.08
+        var topPad    = height * 0.25
         var bottomPad = height * 0.20
+
+        // --- Title text in the top padding area ---
+        if (titleText.length > 0) {
+            ctx.save()
+            ctx.font = Math.round(height * 0.12) + "px Roboto Condensed"
+            ctx.fillStyle = "rgba(255,255,255,0.7)"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "top"
+            ctx.fillText(titleText, width / 2, height * 0.04)
+            ctx.restore()
+        }
         var chartW = width - leftPad - rightPad
         var chartH = height - topPad - bottomPad
         var chartBottom = topPad + chartH
@@ -64,15 +76,24 @@ Canvas {
             return topPad + chartH * (1.0 - l / 100.0)
         }
 
-        // --- Gridlines ---
-        ctx.strokeStyle = "rgba(255,255,255,0.12)"
+        // --- Grid background (Garmin-style) ---
+        // Horizontal lines at 0%, 25%, 50%, 75%, 100%
+        ctx.strokeStyle = "rgba(80,160,255,0.30)"
         ctx.lineWidth = 1
-        var gridLevels = [25, 50, 75, 100]
-        for (var g = 0; g < gridLevels.length; g++) {
-            var gy = levelToY(gridLevels[g])
+        var hGridLevels = [0, 25, 50, 75, 100]
+        for (var g = 0; g < hGridLevels.length; g++) {
+            var gy = levelToY(hGridLevels[g])
             ctx.beginPath()
             ctx.moveTo(leftPad, gy)
             ctx.lineTo(leftPad + chartW, gy)
+            ctx.stroke()
+        }
+        // Vertical lines — one per day
+        for (var vd = 0; vd <= 7; vd++) {
+            var vx = timeToX(startTime + vd * 24 * 3600)
+            ctx.beginPath()
+            ctx.moveTo(vx, topPad)
+            ctx.lineTo(vx, chartBottom)
             ctx.stroke()
         }
 
@@ -174,9 +195,9 @@ Canvas {
 
                 var grad = ctx.createLinearGradient(0, topPad, 0, chartBottom)
                 grad.addColorStop(0.0, "rgba(255,152,0,0.70)")
-                grad.addColorStop(0.35, "rgba(255,152,0,0.30)")
-                grad.addColorStop(0.65, "rgba(255,152,0,0.08)")
-                grad.addColorStop(1.0, "rgba(255,152,0,0.01)")
+                grad.addColorStop(0.30, "rgba(255,152,0,0.70)")
+                grad.addColorStop(0.65, "rgba(255,152,0,0.18)")
+                grad.addColorStop(1.0, "rgba(255,152,0,0.02)")
                 ctx.fillStyle = grad
                 ctx.fill()
 
@@ -203,6 +224,35 @@ Canvas {
                 }
 
                 // --- Smooth stroke on top (the visible line) ---
+
+                // --- Grid glow through gradient fill ---
+                // Re-draw grid lines inside the filled area with orange tint
+                ctx.save()
+                ctx.beginPath()
+                ctx.moveTo(pts[0].x, chartBottom)
+                ctx.lineTo(pts[0].x, pts[0].y)
+                traceSmoothSegments(ctx, pts)
+                ctx.lineTo(pts[pts.length - 1].x, chartBottom)
+                ctx.closePath()
+                ctx.clip()
+                ctx.lineWidth = 1
+                ctx.strokeStyle = "rgba(255,180,60,0.45)"
+                for (var gh = 0; gh < hGridLevels.length; gh++) {
+                    var ghy = levelToY(hGridLevels[gh])
+                    ctx.beginPath()
+                    ctx.moveTo(leftPad, ghy)
+                    ctx.lineTo(leftPad + chartW, ghy)
+                    ctx.stroke()
+                }
+                for (var gv = 0; gv <= 7; gv++) {
+                    var gvx = timeToX(startTime + gv * 24 * 3600)
+                    ctx.beginPath()
+                    ctx.moveTo(gvx, topPad)
+                    ctx.lineTo(gvx, chartBottom)
+                    ctx.stroke()
+                }
+                ctx.restore()
+
                 ctx.beginPath()
                 ctx.moveTo(pts[0].x, pts[0].y)
                 traceSmoothSegments(ctx, pts)

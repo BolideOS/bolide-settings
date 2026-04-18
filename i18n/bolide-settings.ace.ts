@@ -522,6 +522,11 @@
         <source>Configure in Workout app settings</source>
         <translation type="unfinished"></translation>
     </message>
+    <message id="id-battery-charge">
+        <location filename="../src/qml/PowerManagerPage.qml" line="419"/>
+        <source>Battery Charge</source>
+        <translation type="unfinished">Battery Charge</translation>
+    </message>
 </context>
 <context>
     <name>AboutPage</name>
@@ -649,6 +654,11 @@
         <location filename="../src/qml/QuickPanelPage.qml" line="130"/>
         <source>Airplane Mode</source>
         <translation type="unfinished">Airplane Mode</translation>
+    </message>
+    <message id="id-battery-charge">
+        <location filename="../src/qml/PowerManagerPage.qml" line="419"/>
+        <source>Battery Charge</source>
+        <translation type="unfinished">Battery Charge</translation>
     </message>
 </context>
 </TS>

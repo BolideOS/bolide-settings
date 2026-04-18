@@ -69,123 +69,83 @@ Application {
     Component {
         id: firstPageComponent
 
-        Flickable {
-            contentHeight: settingsColumn.implicitHeight
-            contentWidth: width
-            boundsBehavior: Flickable.DragOverBounds
-            flickableDirection: Flickable.VerticalFlick
+        SnapListView {
+            id: settingsList
 
-            Column {
-                id: settingsColumn
-                anchors.fill: parent
+            model: ListModel { id: menuModel }
 
-                Item { width: parent.width; height: DeviceSpecs.hasRoundScreen ? Dims.h(6) : Dims.h(2) }
+            delegate: CompactListItem {
+                title: model.title
+                iconName: model.pageKey === "quickpanel"
+                    ? (options.value.batteryBottom ? "ios-quickpanel-batterybottom" : "ios-quickpanel-batterytop")
+                    : model.iconName
+                highlight: ListView.isCurrentItem
+                onClicked: {
+                    settingsList.currentIndex = index
+                    settingsList.openPage(model.pageKey)
+                }
+            }
 
-                CompactListItem {
-                    //% "Display"
-                    title: qsTrId("id-display-page")
-                    iconName: "ios-display-outline"
-                    onClicked: layerStack.push(displayLayer)
-                }
-                CompactListItem {
-                    //% "Nightstand"
-                    title: qsTrId("id-nightstand-page")
-                    iconName: "ios-moon-outline"
-                    onClicked: layerStack.push(nightstandLayer)
-                }
-                CompactListItem {
-                    //% "Quick Panel"
-                    title: qsTrId("id-quickpanel-page")
-                    iconName: options.value.batteryBottom ? "ios-quickpanel-batterybottom" : "ios-quickpanel-batterytop"
-                    onClicked: layerStack.push(quickPanelLayer)
-                }
-                CompactListItem {
+            Component.onCompleted: {
+                //% "Display"
+                menuModel.append({title: qsTrId("id-display-page"), iconName: "ios-display-outline", pageKey: "display"})
+                //% "Nightstand"
+                menuModel.append({title: qsTrId("id-nightstand-page"), iconName: "ios-moon-outline", pageKey: "nightstand"})
+                //% "Quick Panel"
+                menuModel.append({title: qsTrId("id-quickpanel-page"), iconName: "ios-quickpanel-batterybottom", pageKey: "quickpanel"})
+                if (DeviceSpecs.hasSpeaker) {
                     //% "Sound"
-                    title: qsTrId("id-sound-page")
-                    iconName: "ios-sound-outline"
-                    onClicked: layerStack.push(soundLayer)
-                    visible: DeviceSpecs.hasSpeaker
+                    menuModel.append({title: qsTrId("id-sound-page"), iconName: "ios-sound-outline", pageKey: "sound"})
                 }
-                CompactListItem {
-                    //% "Wallpaper"
-                    title: qsTrId("id-wallpaper-page")
-                    iconName: "ios-wallpaper-outline"
-                    onClicked: layerStack.push(wallpaperLayer)
-                }
-                CompactListItem {
-                    //% "Watchface"
-                    title: qsTrId("id-watchface-page")
-                    iconName: "ios-watchface-outline"
-                    onClicked: layerStack.push(watchfaceLayer)
-                }
-                CompactListItem {
-                    //% "Launcher"
-                    title: qsTrId("id-launcher-page")
-                    iconName: "ios-launcher-outline"
-                    onClicked: layerStack.push(launcherLayer)
-                }
-                CompactListItem {
-                    //% "Time"
-                    title: qsTrId("id-time-page")
-                    iconName: "ios-clock-outline"
-                    onClicked: layerStack.push(timeLayer)
-                }
-                CompactListItem {
-                    //% "Date"
-                    title: qsTrId("id-date-page")
-                    iconName: "ios-date-outline"
-                    onClicked: layerStack.push(dateLayer)
-                }
-                CompactListItem {
-                    //% "Units"
-                    title: qsTrId("id-units-page")
-                    iconName: "ios-units-outline"
-                    onClicked: layerStack.push(unitsLayer)
-                }
-                CompactListItem {
-                    //% "Language"
-                    title: qsTrId("id-language-page")
-                    iconName: "ios-earth-outline"
-                    onClicked: layerStack.push(languageLayer)
-                }
-                CompactListItem {
-                    //% "Time zone"
-                    title: qsTrId("id-timezone-page")
-                    iconName: "ios-globe-outline"
-                    onClicked: layerStack.push(timezoneLayer)
-                }
-                CompactListItem {
-                    //% "Bluetooth"
-                    title: qsTrId("id-bluetooth-page")
-                    iconName: "ios-bluetooth-outline"
-                    onClicked: layerStack.push(bluetoothLayer)
-                }
-                CompactListItem {
-                    //% "USB"
-                    title: qsTrId("id-usb-page")
-                    iconName: "ios-usb"
-                    onClicked: layerStack.push(usbLayer)
-                }
-                CompactListItem {
-                    //% "Power"
-                    title: qsTrId("id-power-page")
-                    iconName: "ios-power-outline"
-                    onClicked: layerStack.push(powerLayer)
-                }
-                CompactListItem {
-                    //% "Power Manager"
-                    title: qsTrId("id-power-manager-page")
-                    iconName: "ios-battery-full"
-                    onClicked: layerStack.push(powerManagerLayer)
-                }
-                CompactListItem {
-                    //% "About"
-                    title: qsTrId("id-about-page")
-                    iconName: "ios-help-circle-outline"
-                    onClicked: layerStack.push(aboutLayer)
-                }
+                //% "Wallpaper"
+                menuModel.append({title: qsTrId("id-wallpaper-page"), iconName: "ios-wallpaper-outline", pageKey: "wallpaper"})
+                //% "Watchface"
+                menuModel.append({title: qsTrId("id-watchface-page"), iconName: "ios-watchface-outline", pageKey: "watchface"})
+                //% "Launcher"
+                menuModel.append({title: qsTrId("id-launcher-page"), iconName: "ios-launcher-outline", pageKey: "launcher"})
+                //% "Time"
+                menuModel.append({title: qsTrId("id-time-page"), iconName: "ios-clock-outline", pageKey: "time"})
+                //% "Date"
+                menuModel.append({title: qsTrId("id-date-page"), iconName: "ios-date-outline", pageKey: "date"})
+                //% "Units"
+                menuModel.append({title: qsTrId("id-units-page"), iconName: "ios-units-outline", pageKey: "units"})
+                //% "Language"
+                menuModel.append({title: qsTrId("id-language-page"), iconName: "ios-earth-outline", pageKey: "language"})
+                //% "Time zone"
+                menuModel.append({title: qsTrId("id-timezone-page"), iconName: "ios-globe-outline", pageKey: "timezone"})
+                //% "Bluetooth"
+                menuModel.append({title: qsTrId("id-bluetooth-page"), iconName: "ios-bluetooth-outline", pageKey: "bluetooth"})
+                //% "USB"
+                menuModel.append({title: qsTrId("id-usb-page"), iconName: "ios-usb", pageKey: "usb"})
+                //% "Power"
+                menuModel.append({title: qsTrId("id-power-page"), iconName: "ios-power-outline", pageKey: "power"})
+                //% "Power Manager"
+                menuModel.append({title: qsTrId("id-power-manager-page"), iconName: "ios-battery-full", pageKey: "powermanager"})
+                //% "About"
+                menuModel.append({title: qsTrId("id-about-page"), iconName: "ios-help-circle-outline", pageKey: "about"})
+            }
 
-                Item { width: parent.width; height: DeviceSpecs.hasRoundScreen ? Dims.h(6) : Dims.h(2) }
+            function openPage(key) {
+                var pages = {
+                    "display": displayLayer,
+                    "nightstand": nightstandLayer,
+                    "quickpanel": quickPanelLayer,
+                    "sound": soundLayer,
+                    "wallpaper": wallpaperLayer,
+                    "watchface": watchfaceLayer,
+                    "launcher": launcherLayer,
+                    "time": timeLayer,
+                    "date": dateLayer,
+                    "units": unitsLayer,
+                    "language": languageLayer,
+                    "timezone": timezoneLayer,
+                    "bluetooth": bluetoothLayer,
+                    "usb": usbLayer,
+                    "power": powerLayer,
+                    "powermanager": powerManagerLayer,
+                    "about": aboutLayer
+                }
+                if (pages[key]) layerStack.push(pages[key])
             }
         }
     }

@@ -33,6 +33,7 @@ Item {
     property var batteryHistory: []
     property bool serviceAvailable: false
     property bool isEmulator: false
+    property int menuFocus: 0
 
     // Battery health properties
     property int healthPercent: -1
@@ -319,7 +320,7 @@ Item {
     Flickable {
         anchors.fill: parent
         anchors.topMargin: Dims.h(15)
-        anchors.bottomMargin: Dims.h(15)
+        anchors.bottomMargin: Dims.h(3)
         contentHeight: contentColumn.implicitHeight
         clip: true
 
@@ -351,6 +352,7 @@ Item {
                         //% "Active Profile"
                         text: qsTrId("id-active-profile")
                         font.pixelSize: Dims.l(6)
+                        font.family: "Roboto Condensed"
                         opacity: 0.6
                     }
 
@@ -371,6 +373,7 @@ Item {
                                   //% "Service unavailable"
                                   qsTrId("id-service-unavailable")
                             font.pixelSize: Dims.l(5)
+                            font.family: "Roboto Condensed"
                             wrapMode: Text.WordWrap
                             anchors.verticalCenter: parent.verticalCenter
                             opacity: serviceAvailable ? 1.0 : 0.6
@@ -384,43 +387,49 @@ Item {
                 height: Dims.h(3)
             }
 
-            RowSeparator {}
-
-            ListItem {
-                height: Dims.h(12)
-                width: parent.width
+            CompactListItem {
                 //% "Edit Profiles"
                 title: qsTrId("id-edit-profiles")
                 iconName: "ios-settings-outline"
-                onClicked: layerStack.push(profileListLayer)
+                highlight: menuFocus === 0
+                onClicked: {
+                    menuFocus = 0
+                    layerStack.push(profileListLayer)
+                }
             }
 
-            RowSeparator {}
-
-            ListItem {
-                height: Dims.h(12)
-                width: parent.width
+            CompactListItem {
                 //% "Automation"
                 title: qsTrId("id-automation")
                 iconName: "ios-timer-outline"
+                highlight: menuFocus === 1
                 enabled: false
                 opacity: 0.5
             }
-
-            RowSeparator {}
 
             Item {
                 width: parent.width
                 height: Dims.h(35)
 
-                BatteryHistoryGraph {
+                Rectangle {
                     anchors.fill: parent
                     anchors.leftMargin: Dims.w(2)
                     anchors.rightMargin: Dims.w(2)
-                    historyData: batteryHistory
-                    currentLevel: batteryLevel
-                    drainRatePerHour: root.drainRatePerHour
-                    isCharging: batteryCharging
+                    radius: 4
+                    color: "transparent"
+                    border.color: "#4D50A0FF"
+                    border.width: 1
+
+                    BatteryHistoryGraph {
+                        anchors.fill: parent
+                        anchors.margins: 1
+                        historyData: batteryHistory
+                        currentLevel: batteryLevel
+                        drainRatePerHour: root.drainRatePerHour
+                        isCharging: batteryCharging
+                        //% "Battery Charge"
+                        titleText: qsTrId("id-battery-charge")
+                    }
                 }
             }
 
@@ -431,13 +440,15 @@ Item {
                 Label {
                     text: batteryLevel + "%"
                     font.pixelSize: Dims.l(8)
-                    font.styleName: "SemiCondensed Light"
+                    font.family: "Roboto Condensed"
+                    font.weight: Font.Normal
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Label {
                     text: drainRate
                     font.pixelSize: Dims.l(4)
+                    font.family: "Roboto Condensed"
                     opacity: 0.6
                     anchors.verticalCenter: parent.verticalCenter
                     visible: drainRate !== "" && !batteryCharging
@@ -446,6 +457,7 @@ Item {
                 Label {
                     text: batteryCharging ? "⚡" : ""
                     font.pixelSize: Dims.l(5)
+                    font.family: "Roboto Condensed"
                     anchors.verticalCenter: parent.verticalCenter
                     visible: batteryCharging
                 }
@@ -476,6 +488,7 @@ Item {
                     //% "Battery Health"
                     text: qsTrId("id-battery-health")
                     font.pixelSize: Dims.l(5)
+                    font.family: "Roboto Condensed"
                     opacity: 0.6
                 }
 
@@ -521,7 +534,8 @@ Item {
                     Label {
                         text: healthPercent > 0 ? healthPercent + "%" : "--"
                         font.pixelSize: Dims.l(7)
-                        font.styleName: "SemiCondensed Light"
+                        font.family: "Roboto Condensed"
+                        font.weight: Font.Normal
                         color: healthPercent >= 80 ? "#4CAF50" :
                                healthPercent >= 60 ? "#FF9800" :
                                healthPercent >= 40 ? "#FF5722" : "#F44336"
@@ -537,6 +551,7 @@ Item {
                                 return ""
                             }
                             font.pixelSize: Dims.l(3.5)
+                            font.family: "Roboto Condensed"
                             opacity: 0.7
                             visible: text !== ""
                         }
@@ -548,6 +563,7 @@ Item {
                                 return ""
                             }
                             font.pixelSize: Dims.l(3)
+                            font.family: "Roboto Condensed"
                             opacity: 0.5
                             visible: text !== ""
                         }
@@ -571,6 +587,7 @@ Item {
                         return ""
                     }
                     font.pixelSize: Dims.l(3)
+                    font.family: "Roboto Condensed"
                     opacity: 0.4
                     visible: text !== "" && healthPercent > 0
                 }
@@ -596,6 +613,7 @@ Item {
                         return qsTrId("id-health-degraded")
                     }
                     font.pixelSize: Dims.l(3)
+                    font.family: "Roboto Condensed"
                     opacity: 0.5
                     visible: text !== ""
                 }

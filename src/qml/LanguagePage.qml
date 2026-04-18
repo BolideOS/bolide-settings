@@ -18,6 +18,7 @@
 
 import QtQuick 2.9
 import org.asteroid.controls 1.0
+import org.asteroid.utils 1.0
 import org.nemomobile.systemsettings 1.0
 
 Item {
@@ -26,41 +27,31 @@ Item {
 
     LanguageModel { id: langSettings }
 
-    Spinner {
-        id: langLV
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: title.bottom
-        height: Dims.h(60)
+    SnapListView {
+        id: langList
+        anchors.fill: parent
         model: langSettings
 
-        delegate: SpinnerDelegate { text: langSettings.languageName(index) }
-    }
-
-    Component.onCompleted: {
-        var i = langSettings.currentIndex;
-        if(i != -1)
-            langLV.positionViewAtIndex(i, ListView.SnapPosition)
-    }
-
-    IconButton {
-        iconName: "ios-checkmark-circle-outline"
-        anchors { 
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-            bottomMargin: Dims.iconButtonMargin
+        delegate: CompactListItem {
+            title: langSettings.languageName(index)
+            iconName: "ios-earth-outline"
+            highlight: ListView.isCurrentItem
+            onClicked: {
+                langList.currentIndex = index
+                if (index === langSettings.currentIndex) {
+                    root.pop()
+                } else {
+                    langSettings.setSystemLocale(langSettings.locale(index), LanguageModel.UpdateWithoutReboot)
+                }
+            }
         }
 
-        onClicked: {
-            if(langLV.currentIndex == langSettings.currentIndex)
-                root.pop();
-            else
-                langSettings.setSystemLocale(langSettings.locale(langLV.currentIndex), LanguageModel.UpdateWithoutReboot)
+        Component.onCompleted: {
+            var i = langSettings.currentIndex
+            if (i !== -1) {
+                langList.positionViewAtIndex(i, ListView.Center)
+                langList.currentIndex = i
+            }
         }
-    }
-
-    PageHeader {
-        id: title
-        text: qsTrId("id-language-page")
     }
 }
