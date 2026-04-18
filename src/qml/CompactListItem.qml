@@ -45,7 +45,8 @@ Item {
         }
         font {
             pixelSize: labelFontSize
-            styleName: "SemiCondensed Light"
+            family: "Roboto Condensed"
+            weight: Font.Medium
         }
     }
 }
