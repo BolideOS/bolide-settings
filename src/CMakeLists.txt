@@ -21,20 +21,20 @@ set(HEADERS
 	tilttowake.h
 	volumecontrol.h)
 
-add_library(asteroid-settings ${SRC} ${HEADERS} resources.qrc 
+add_library(bolide-settings ${SRC} ${HEADERS} resources.qrc 
     ${CMAKE_CURRENT_BINARY_DIR}/mceiface.h 
     ${CMAKE_CURRENT_BINARY_DIR}/mceiface.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/VolumeControl2.h 
     ${CMAKE_CURRENT_BINARY_DIR}/VolumeControl2.cpp
 )
-set_target_properties(asteroid-settings PROPERTIES PREFIX "")
+set_target_properties(bolide-settings PROPERTIES PREFIX "")
 
-target_link_libraries(asteroid-settings PRIVATE
+target_link_libraries(bolide-settings PRIVATE
 	Qt5::Qml
 	Qt5::Quick
 	Qt5::DBus
 	Qt5::Multimedia
 	AsteroidApp)
 
-install(TARGETS asteroid-settings
+install(TARGETS bolide-settings
 	DESTINATION ${CMAKE_INSTALL_LIBDIR})

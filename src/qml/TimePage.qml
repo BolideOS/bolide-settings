@@ -32,7 +32,7 @@ Item {
 
     ConfigurationValue {
         id: use12H
-        key: "/org/asteroidos/settings/use-12h-format"
+        key: "/org/bolideos/settings/use-12h-format"
         defaultValue: false
     }
 

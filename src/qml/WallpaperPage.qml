@@ -27,12 +27,12 @@ import org.asteroid.utils 1.0
 
 Item {
 
-    property string assetPath: "file:///usr/share/asteroid-launcher/wallpapers/"
+    property string assetPath: "file:///usr/share/bolide-launcher/wallpapers/"
 
     ConfigurationValue {
         id: wallpaperSource
 
-        key: "/desktop/asteroid/background-filename"
+        key: "/desktop/bolide/background-filename"
         defaultValue: assetPath + "full/000-flatmesh.qml"
     }
 

@@ -34,10 +34,10 @@ int main(int argc, char *argv[])
     uname(&buf);
     QScopedPointer<QGuiApplication> app(AsteroidApp::application(argc, argv));
     QScopedPointer<QQuickView> view(AsteroidApp::createView());
-    qmlRegisterType<VolumeControl>("org.asteroid.settings", 1, 0, "VolumeControl");
-    qmlRegisterType<TiltToWake>("org.asteroid.settings", 1, 0, "TiltToWake");
-    qmlRegisterType<TapToWake>("org.asteroid.settings", 1, 0, "TapToWake");
-    qmlRegisterType<SysInfo>("org.asteroid.settings", 1, 0, "SysInfo");
+    qmlRegisterType<VolumeControl>("org.bolide.settings", 1, 0, "VolumeControl");
+    qmlRegisterType<TiltToWake>("org.bolide.settings", 1, 0, "TiltToWake");
+    qmlRegisterType<TapToWake>("org.bolide.settings", 1, 0, "TapToWake");
+    qmlRegisterType<SysInfo>("org.bolide.settings", 1, 0, "SysInfo");
     view->setSource(QUrl("qrc:/qml/main.qml"));
     view->rootContext()->setContextProperty("qtVersion", QString(qVersion()));
     view->rootContext()->setContextProperty("kernelVersion", QString(buf.release));

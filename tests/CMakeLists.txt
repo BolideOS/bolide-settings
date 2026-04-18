@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.10.0)
 
 # Can be built standalone:  cd tests && mkdir build && cd build && cmake .. && make && ctest -V
-# Or as part of asteroid-settings:  cmake .. -DBUILD_TESTS=ON
-if(NOT CMAKE_PROJECT_NAME OR CMAKE_PROJECT_NAME STREQUAL "asteroid-settings-tests")
-    project(asteroid-settings-tests)
+# Or as part of bolide-settings:  cmake .. -DBUILD_TESTS=ON
+if(NOT CMAKE_PROJECT_NAME OR CMAKE_PROJECT_NAME STREQUAL "bolide-settings-tests")
+    project(bolide-settings-tests)
     set(STANDALONE_TEST TRUE)
 endif()
 

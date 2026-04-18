@@ -18,7 +18,7 @@
  *   - References to types that don't exist in the module
  *
  * Run standalone:
- *   cd asteroid-settings/tests && mkdir build && cd build
+ *   cd bolide-settings/tests && mkdir build && cd build
  *   cmake .. && make && QT_QPA_PLATFORM=offscreen ./tst_qmlvalidation -v2
  */
 
@@ -34,8 +34,8 @@
 #include <cstdlib>  // _Exit
 
 // Defined via CMake add_definitions:
-//   QML_SOURCE_DIR  — path to asteroid-settings/src/qml/
-//   MOCK_QML_DIR    — path to asteroid-settings/tests/mock-qml/
+//   QML_SOURCE_DIR  — path to bolide-settings/src/qml/
+//   MOCK_QML_DIR    — path to bolide-settings/tests/mock-qml/
 
 // ── C++ Mock for Nemo.DBus 2.0 "DBus" singleton ──────────────────
 // QML property declarations cannot start with uppercase letters, but

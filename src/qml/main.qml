@@ -20,7 +20,7 @@
 import QtQuick 2.9
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
-import org.asteroid.settings 1.0
+import org.bolide.settings 1.0
 import Nemo.Configuration 1.0
 
 Application {
@@ -31,7 +31,7 @@ Application {
 
     ConfigurationValue {
         id: options
-        key: "/desktop/asteroid/quickpanel/options"
+        key: "/desktop/bolide/quickpanel/options"
         defaultValue: {
             "batteryBottom": true,
             "batteryAnimation": true,

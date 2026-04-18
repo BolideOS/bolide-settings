@@ -22,7 +22,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
-import org.asteroid.settings 1.0
+import org.bolide.settings 1.0
 import org.nemomobile.systemsettings 1.0 as NemoSystemSettings
 import Nemo.Configuration 1.0
 import Nemo.Mce 1.0
@@ -30,31 +30,31 @@ import Nemo.Mce 1.0
 Item {
     ConfigurationValue {
         id: nightstandBrightness
-        key: "/desktop/asteroid/nightstand/brightness"
+        key: "/desktop/bolide/nightstand/brightness"
         defaultValue: 30
     }
 
     ConfigurationValue {
         id: nightstandDelay
-        key: "/desktop/asteroid/nightstand/delay"
+        key: "/desktop/bolide/nightstand/delay"
         defaultValue: 5
     }
 
     ConfigurationValue {
         id: nightstandEnabled
-        key: "/desktop/asteroid/nightstand/enabled"
+        key: "/desktop/bolide/nightstand/enabled"
         defaultValue: true
     }
 
     ConfigurationValue {
         id: nightstandUseCustomWatchface
-        key: "/desktop/asteroid/nightstand/use-custom-watchface"
+        key: "/desktop/bolide/nightstand/use-custom-watchface"
         defaultValue: false
     }
 
     ConfigurationValue {
         id: nightstandAlwaysOnDisplay
-        key: "/desktop/asteroid/nightstand/always-on-display"
+        key: "/desktop/bolide/nightstand/always-on-display"
         defaultValue: true
     }
 

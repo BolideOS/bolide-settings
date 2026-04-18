@@ -21,7 +21,7 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
-import org.asteroid.settings 1.0
+import org.bolide.settings 1.0
 import org.nemomobile.systemsettings 1.0
 import Nemo.Configuration 1.0
 import Nemo.Mce 1.0
@@ -32,7 +32,7 @@ Item {
     DisplaySettings { id: displaySettings }
     ConfigurationValue {
         id: bipLevel
-        key: "/org/asteroidos/settings/burn-in-protection-level"
+        key: "/org/bolideos/settings/burn-in-protection-level"
         defaultValue: DeviceSpecs.needsBurnInProtection ? 1.0 : 0.0
     }
 
@@ -51,13 +51,13 @@ Item {
 
     ConfigurationValue {
         id: alwaysOnDisplay
-        key: "/org/asteroidos/settings/always-on-display"
+        key: "/org/bolideos/settings/always-on-display"
         defaultValue: true
     }
 
     ConfigurationValue {
         id: nightstandEnabled
-        key: "/desktop/asteroid/nightstand/enabled"
+        key: "/desktop/bolide/nightstand/enabled"
         defaultValue: true
     }
 

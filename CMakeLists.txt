@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-project(asteroid-settings
+project(bolide-settings
 	VERSION 2.0.0
 	DESCRIPTION "Default settings app for AsteroidOS")
 
@@ -32,15 +32,15 @@ if(BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/asteroid-settings.in
-	${CMAKE_BINARY_DIR}/asteroid-settings
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bolide-settings.in
+	${CMAKE_BINARY_DIR}/bolide-settings
 	@ONLY)
 
-install(PROGRAMS ${CMAKE_BINARY_DIR}/asteroid-settings
+install(PROGRAMS ${CMAKE_BINARY_DIR}/bolide-settings
 	DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 build_translations(i18n)
-generate_desktop(${CMAKE_SOURCE_DIR} asteroid-settings)
+generate_desktop(${CMAKE_SOURCE_DIR} bolide-settings)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 

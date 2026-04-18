@@ -33,13 +33,13 @@ Item {
     // ConfigurationValue for toggle arrays
     ConfigurationValue {
         id: fixedToggles
-        key: "/desktop/asteroid/quickpanel/fixed"
+        key: "/desktop/bolide/quickpanel/fixed"
         defaultValue: ["lockButton", "settingsButton"]
     }
 
     ConfigurationValue {
         id: sliderToggles
-        key: "/desktop/asteroid/quickpanel/slider"
+        key: "/desktop/bolide/quickpanel/slider"
         defaultValue: [
             "brightnessToggle",
             "bluetoothToggle",
@@ -58,7 +58,7 @@ Item {
 
     ConfigurationValue {
         id: toggleEnabled
-        key: "/desktop/asteroid/quickpanel/enabled"
+        key: "/desktop/bolide/quickpanel/enabled"
         defaultValue: {
             "lockButton": true,
             "settingsButton": true,
@@ -79,7 +79,7 @@ Item {
 
     ConfigurationValue {
         id: options
-        key: "/desktop/asteroid/quickpanel/options"
+        key: "/desktop/bolide/quickpanel/options"
         defaultValue: {
             "batteryBottom": true,
             "batteryAnimation": true,

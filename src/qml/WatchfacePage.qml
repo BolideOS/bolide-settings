@@ -27,24 +27,24 @@ import Nemo.Time 1.0
 
 Item {
     property alias displayAmbient: compositor.displayAmbient
-    property string assetPath: "file:///usr/share/asteroid-launcher/"
+    property string assetPath: "file:///usr/share/bolide-launcher/"
     property alias watchface: watchfaceSource.value
 
     ConfigurationValue {
         id: watchfaceSource
-        key: "/desktop/asteroid/watchface"
+        key: "/desktop/bolide/watchface"
         defaultValue: assetPath + "watchfaces/000-default-digital.qml"
     }
 
     ConfigurationValue {
         id: wallpaperSource
-        key: "/desktop/asteroid/background-filename"
-        defaultValue: "file:///usr/share/asteroid-launcher/wallpapers/full/000-flatmesh.qml"
+        key: "/desktop/bolide/background-filename"
+        defaultValue: "file:///usr/share/bolide-launcher/wallpapers/full/000-flatmesh.qml"
     }
 
     ConfigurationValue {
         id: use12H
-        key: "/org/asteroidos/settings/use-12h-format"
+        key: "/org/bolideos/settings/use-12h-format"
         defaultValue: false
     }
 

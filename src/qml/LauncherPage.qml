@@ -39,8 +39,8 @@ Item {
 
     ConfigurationValue {
         id: appLauncherSource
-        key: "/desktop/asteroid/applauncher"
-        defaultValue: "file:///usr/share/asteroid-launcher/applauncher/000-default-horizontal.qml"
+        key: "/desktop/bolide/applauncher"
+        defaultValue: "file:///usr/share/bolide-launcher/applauncher/000-default-horizontal.qml"
     }
 
     GridView {
@@ -51,7 +51,7 @@ Item {
 
         model: FolderListModel {
             id: folderModel
-            folder: "file:///usr/share/asteroid-launcher/applauncher"
+            folder: "file:///usr/share/bolide-launcher/applauncher"
             nameFilters: ["*.qml"]
             onCountChanged: {
                 var i = 0

@@ -19,7 +19,7 @@
 import QtQuick 2.9
 import QtMultimedia 5.8
 import org.asteroid.controls 1.0
-import org.asteroid.settings 1.0
+import org.bolide.settings 1.0
 import Nemo.Configuration 1.0
 
 
@@ -29,7 +29,7 @@ Item {
     ConfigurationValue {
         id: preMuteLevel
 
-        key: "/desktop/asteroid/pre-mute-level"
+        key: "/desktop/bolide/pre-mute-level"
         defaultValue: 80
     }
 

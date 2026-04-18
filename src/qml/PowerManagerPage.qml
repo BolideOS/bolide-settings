@@ -49,9 +49,9 @@ Item {
     DBusInterface {
         id: powerd
         bus: DBus.SystemBus
-        service: "org.asteroidos.powerd"
-        path: "/org/asteroidos/powerd"
-        iface: "org.asteroidos.powerd.ProfileManager"
+        service: "org.bolideos.powerd"
+        path: "/org/bolideos/powerd"
+        iface: "org.bolideos.powerd.ProfileManager"
 
         signalsEnabled: true
 
