@@ -21,6 +21,7 @@ import Nemo.DBus 2.0
 import Nemo.Configuration 1.0
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 
 Item {
     id: root
@@ -90,5 +91,9 @@ Item {
             })
         }
     }
-}
 
+    PageTitle {
+        //% "USB Mode"
+        text: qsTrId("id-usb-mode-page")
+    }
+}

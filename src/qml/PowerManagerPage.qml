@@ -16,8 +16,10 @@
  */
 
 import QtQuick 2.9
+import QtGraphicalEffects 1.0
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 import Nemo.DBus 2.0
 
 Item {
@@ -26,6 +28,7 @@ Item {
     property string activeProfileId: ""
     property string activeProfileName: ""
     property string activeProfileIcon: "ios-battery-full"
+    property real profilePowerScore: 0.0   // 0.0 (eco) → 1.0 (max drain)
     property int batteryLevel: 0
     property bool batteryCharging: false
     property string drainRate: ""
@@ -42,6 +45,96 @@ Item {
     property int cycleCount: 0
     property string healthConfidence: "unavailable"
     property int healthSampleCount: 0
+
+    // Compute 0–1 power score from profile sensors + radios + system flags.
+    // Higher values = more power consumption = warmer card color.
+    //
+    // Color zones by design intent:
+    //   GREEN  (0.0–0.3) — sensors only, all radios off
+    //   YELLOW (0.3–0.6) — BLE on (any mode)
+    //   RED    (0.6–1.0) — GPS or WiFi on
+    function computePowerScore(profile) {
+        var score = 0
+
+        // --- Big-ticket radios: these define the color zone ---
+        if (profile.radios) {
+            var r = profile.radios
+            // GPS sensor on → instant red territory
+            if (profile.sensors && profile.sensors.gps && profile.sensors.gps !== "off")
+                score += 0.35   // pushes into 0.6+ red zone
+            // WiFi on → red territory
+            if (r.wifi && r.wifi.state === "on")
+                score += 0.30   // pushes into 0.6+ red zone
+            // BLE on → yellow territory
+            if (r.ble && r.ble.state === "on")
+                score += 0.20   // pushes into 0.3+ yellow zone
+            // LTE on → heavy
+            if (r.lte && r.lte.state === "always")
+                score += 0.25
+            else if (r.lte && r.lte.state === "calls_only")
+                score += 0.10
+            // NFC on → minor
+            if (r.nfc && r.nfc.state === "on")
+                score += 0.03
+        }
+
+        // --- Sensors (contribute up to ~0.30 total) ---
+        if (profile.sensors) {
+            var sensors = profile.sensors
+            var sensorWeights = {
+                "heart_rate":    0.06,
+                "spo2":          0.05,
+                "gyroscope":     0.04,
+                "accelerometer": 0.03,
+                "compass":       0.03,
+                "barometer":     0.02,
+                "ambient_light": 0.02,
+                "hrv":           0.03
+            }
+            // GPS already counted above in radios section
+            var modeFrac = {
+                "off": 0.0,
+                "low": 0.25, "sleep_only": 0.25, "periodic": 0.35, "on_demand": 0.25,
+                "medium": 0.50,
+                "high": 0.75, "always": 0.75, "continuous": 1.0,
+                "workout": 1.0
+            }
+            for (var sName in sensorWeights) {
+                if (sensors[sName] !== undefined) {
+                    var frac = modeFrac[sensors[sName]]
+                    score += sensorWeights[sName] * (frac !== undefined ? frac : 0)
+                }
+            }
+        }
+
+        // --- System flags (contribute up to ~0.10) ---
+        if (profile.system) {
+            if (profile.system.always_on_display) score += 0.06
+            if (profile.system.tilt_to_wake) score += 0.02
+        }
+
+        return Math.min(score, 1.0)
+    }
+
+    // Map power score (0→1) to a Theme graded color: green → yellow → red
+    function powerScoreColor(t) {
+        var lo  = Theme.gradeLow
+        var mid = Theme.gradeMid
+        var hi  = Theme.gradeHigh
+        var r, g, b
+        if (t <= 0.5) {
+            var f = t / 0.5
+            r = lo.r + f * (mid.r - lo.r)
+            g = lo.g + f * (mid.g - lo.g)
+            b = lo.b + f * (mid.b - lo.b)
+        } else {
+            var f2 = (t - 0.5) / 0.5
+            r = mid.r + f2 * (hi.r - mid.r)
+            g = mid.g + f2 * (hi.g - mid.g)
+            b = mid.b + f2 * (hi.b - mid.b)
+        }
+        return Qt.rgba(r, g, b, 1.0)
+    }
 
     ListModel {
         id: profilesModel
@@ -76,13 +169,22 @@ Item {
             typedCall("GetActiveProfile", [], function(result) {
                 serviceAvailable = true
                 activeProfileId = result
+                console.log("PowerManager: activeProfileId = " + activeProfileId)
 
                 typedCall("GetProfile", [{"type": "s", "value": activeProfileId}], function(profileJson) {
                     var profile = JSON.parse(profileJson)
                     activeProfileName = profile.name
                     activeProfileIcon = profile.icon || "ios-battery-full"
-                }, handleError)
-            }, handleError)
+                    profilePowerScore = computePowerScore(profile)
+                    console.log("PowerScore: " + profilePowerScore.toFixed(3) +
+                                " color: " + powerScoreColor(profilePowerScore) +
+                                " opacity: " + Theme.cardGradientOpacity)
+                }, function(err) {
+                    console.log("PowerManager: GetProfile failed: " + err)
+                })
+            }, function(err) {
+                console.log("PowerManager: GetActiveProfile failed: " + err)
+            })
         }
 
         function loadBatteryState() {
@@ -318,8 +420,8 @@ Item {
     }
 
     Flickable {
+        id: contentFlickable
         anchors.fill: parent
-        anchors.topMargin: Dims.h(15)
         anchors.bottomMargin: Dims.h(3)
         contentHeight: contentColumn.implicitHeight
         clip: true
@@ -332,19 +434,47 @@ Item {
 
             Item {
                 width: parent.width
-                height: Dims.h(8)
+                height: Dims.h(23)
             }
 
             MouseArea {
                 width: parent.width
-                height: profileCardColumn.height
+                height: profileCard.height
 
                 onClicked: layerStack.push(profileSelectorLayer)
 
-                Column {
-                    id: profileCardColumn
-                    width: parent.width
-                    spacing: Dims.h(1)
+                Rectangle {
+                    id: profileCard
+                    width: parent.width - Dims.w(4)
+                    height: profileCardColumn.height + Dims.h(3)
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    radius: 4
+                    color: "transparent"
+                    border.color: Theme.graphBorderColor
+                    border.width: 1
+
+                    // Dynamic gradient: green (eco) → yellow → red (power-hungry)
+                    LinearGradient {
+                        id: powerGradientBg
+                        anchors.fill: parent
+                        anchors.margins: 1
+                        start: Qt.point(0, 0)
+                        end: Qt.point(0, height)
+                        gradient: Gradient {
+                            GradientStop { position: 0.0; color: Qt.rgba(
+                                powerScoreColor(profilePowerScore).r,
+                                powerScoreColor(profilePowerScore).g,
+                                powerScoreColor(profilePowerScore).b,
+                                Theme.cardGradientOpacity) }
+                            GradientStop { position: 1.0; color: "transparent" }
+                        }
+                    }
+
+                    Column {
+                        id: profileCardColumn
+                        width: parent.width
+                        anchors.centerIn: parent
+                        spacing: Dims.h(1)
 
                     Label {
                         width: parent.width
@@ -352,7 +482,7 @@ Item {
                         //% "Active Profile"
                         text: qsTrId("id-active-profile")
                         font.pixelSize: Dims.l(6)
-                        font.family: "Roboto Condensed"
+                        font.family: Theme.fontFamily
                         opacity: 0.6
                     }
 
@@ -373,11 +503,12 @@ Item {
                                   //% "Service unavailable"
                                   qsTrId("id-service-unavailable")
                             font.pixelSize: Dims.l(5)
-                            font.family: "Roboto Condensed"
+                            font.family: Theme.fontFamily
                             wrapMode: Text.WordWrap
                             anchors.verticalCenter: parent.verticalCenter
                             opacity: serviceAvailable ? 1.0 : 0.6
                         }
+                    }
                     }
                 }
             }
@@ -417,7 +548,7 @@ Item {
                     anchors.rightMargin: Dims.w(2)
                     radius: 4
                     color: "transparent"
-                    border.color: "#4D50A0FF"
+                    border.color: Theme.graphBorderColor
                     border.width: 1
 
                     BatteryHistoryGraph {
@@ -440,7 +571,7 @@ Item {
                 Label {
                     text: batteryLevel + "%"
                     font.pixelSize: Dims.l(8)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     font.weight: Font.Normal
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -448,7 +579,7 @@ Item {
                 Label {
                     text: drainRate
                     font.pixelSize: Dims.l(4)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     opacity: 0.6
                     anchors.verticalCenter: parent.verticalCenter
                     visible: drainRate !== "" && !batteryCharging
@@ -457,7 +588,7 @@ Item {
                 Label {
                     text: batteryCharging ? "⚡" : ""
                     font.pixelSize: Dims.l(5)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     anchors.verticalCenter: parent.verticalCenter
                     visible: batteryCharging
                 }
@@ -488,8 +619,7 @@ Item {
                     //% "Battery Health"
                     text: qsTrId("id-battery-health")
                     font.pixelSize: Dims.l(5)
-                    font.family: "Roboto Condensed"
-                    opacity: 0.6
+                    font.family: Theme.fontFamily
                 }
 
                 // Health bar
@@ -503,7 +633,7 @@ Item {
                         width: parent.width * 0.70
                         height: Dims.h(1.5)
                         radius: height / 2
-                        color: "#333333"
+                        color: Theme.surfaceColor
 
                         Rectangle {
                             id: healthBarFill
@@ -512,9 +642,9 @@ Item {
                             anchors.bottom: parent.bottom
                             width: parent.width * Math.max(0, Math.min(1, healthPercent / 100.0))
                             radius: parent.radius
-                            color: healthPercent >= 80 ? "#4CAF50" :
-                                   healthPercent >= 60 ? "#FF9800" :
-                                   healthPercent >= 40 ? "#FF5722" : "#F44336"
+                            color: healthPercent >= 80 ? Theme.healthGood :
+                                   healthPercent >= 60 ? Theme.healthOk :
+                                   healthPercent >= 40 ? Theme.healthWarn : Theme.healthBad
 
                             Behavior on width {
                                 NumberAnimation { duration: 400; easing.type: Easing.OutQuad }
@@ -534,11 +664,11 @@ Item {
                     Label {
                         text: healthPercent > 0 ? healthPercent + "%" : "--"
                         font.pixelSize: Dims.l(7)
-                        font.family: "Roboto Condensed"
+                        font.family: Theme.fontFamily
                         font.weight: Font.Normal
-                        color: healthPercent >= 80 ? "#4CAF50" :
-                               healthPercent >= 60 ? "#FF9800" :
-                               healthPercent >= 40 ? "#FF5722" : "#F44336"
+                        color: healthPercent >= 80 ? Theme.healthGood :
+                               healthPercent >= 60 ? Theme.healthOk :
+                               healthPercent >= 40 ? Theme.healthWarn : Theme.healthBad
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
@@ -551,7 +681,7 @@ Item {
                                 return ""
                             }
                             font.pixelSize: Dims.l(3.5)
-                            font.family: "Roboto Condensed"
+                            font.family: Theme.fontFamily
                             opacity: 0.7
                             visible: text !== ""
                         }
@@ -563,7 +693,7 @@ Item {
                                 return ""
                             }
                             font.pixelSize: Dims.l(3)
-                            font.family: "Roboto Condensed"
+                            font.family: Theme.fontFamily
                             opacity: 0.5
                             visible: text !== ""
                         }
@@ -587,7 +717,7 @@ Item {
                         return ""
                     }
                     font.pixelSize: Dims.l(3)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     opacity: 0.4
                     visible: text !== "" && healthPercent > 0
                 }
@@ -613,7 +743,7 @@ Item {
                         return qsTrId("id-health-degraded")
                     }
                     font.pixelSize: Dims.l(3)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     opacity: 0.5
                     visible: text !== ""
                 }
@@ -628,7 +758,7 @@ Item {
         }
     }
 
-    PageHeader {
+    PageTitle {
         //% "Power Manager"
         text: qsTrId("id-power-manager-page")
     }

@@ -10,6 +10,7 @@ import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 
 Item {
     id: root
@@ -18,15 +19,17 @@ Item {
     property bool highlight: false
     property int iconSize: Dims.h(10)
     property int labelFontSize: Dims.l(9)
-    property color iconColor: "#FFD700"
+    property color iconColor: Theme.iconActive
     signal clicked()
 
-    width: parent.width
+    width: parent ? parent.width : 0
     height: Dims.h(17)
 
+    // ========= SEPARATOR STYLE (deepBlue / ember) =========
     // Gradient radiating from separator line toward left edge (icon area)
     LinearGradient {
         id: highlightLeft
+        visible: Theme.menuHighlightStyle === "separator"
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
@@ -35,9 +38,9 @@ Item {
         start: Qt.point(width, 0)
         end: Qt.point(0, 0)
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#CC1785DD" }
-            GradientStop { position: 0.3; color: "#CC1785DD" }
-            GradientStop { position: 1.0; color: "#00000000" }
+            GradientStop { position: 0.0; color: Theme.menuHighlightColor }
+            GradientStop { position: Theme.menuHighlightHold; color: Theme.menuHighlightColor }
+            GradientStop { position: 1.0; color: "transparent" }
         }
         Behavior on opacity {
             NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
@@ -47,6 +50,7 @@ Item {
     // Gradient radiating from separator line toward right edge (text area)
     LinearGradient {
         id: highlightRight
+        visible: Theme.menuHighlightStyle === "separator"
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: separator.horizontalCenter
@@ -55,9 +59,9 @@ Item {
         start: Qt.point(0, 0)
         end: Qt.point(width, 0)
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#CC1785DD" }
-            GradientStop { position: 0.3; color: "#CC1785DD" }
-            GradientStop { position: 1.0; color: "#00000000" }
+            GradientStop { position: 0.0; color: Theme.menuHighlightColor }
+            GradientStop { position: Theme.menuHighlightHold; color: Theme.menuHighlightColor }
+            GradientStop { position: 1.0; color: "transparent" }
         }
         Behavior on opacity {
             NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
@@ -67,6 +71,7 @@ Item {
     // Top border — fades from separator outward
     LinearGradient {
         id: borderTopLeft
+        visible: Theme.menuHighlightStyle === "separator"
         height: 1
         anchors.top: parent.top
         anchors.left: parent.left
@@ -75,14 +80,15 @@ Item {
         start: Qt.point(width, 0)
         end: Qt.point(0, 0)
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#88FFFFFF" }
-            GradientStop { position: 0.3; color: "#88FFFFFF" }
-            GradientStop { position: 1.0; color: "#00FFFFFF" }
+            GradientStop { position: 0.0; color: Theme.menuBorderColor }
+            GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+            GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
         }
         Behavior on opacity { NumberAnimation { duration: 150 } }
     }
     LinearGradient {
         id: borderTopRight
+        visible: Theme.menuHighlightStyle === "separator"
         height: 1
         anchors.top: parent.top
         anchors.left: separator.horizontalCenter
@@ -91,9 +97,9 @@ Item {
         start: Qt.point(0, 0)
         end: Qt.point(width, 0)
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#88FFFFFF" }
-            GradientStop { position: 0.3; color: "#88FFFFFF" }
-            GradientStop { position: 1.0; color: "#00FFFFFF" }
+            GradientStop { position: 0.0; color: Theme.menuBorderColor }
+            GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+            GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
         }
         Behavior on opacity { NumberAnimation { duration: 150 } }
     }
@@ -101,6 +107,7 @@ Item {
     // Bottom border — fades from separator outward
     LinearGradient {
         id: borderBottomLeft
+        visible: Theme.menuHighlightStyle === "separator"
         height: 1
         anchors.bottom: parent.bottom
         anchors.left: parent.left
@@ -109,14 +116,15 @@ Item {
         start: Qt.point(width, 0)
         end: Qt.point(0, 0)
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#88FFFFFF" }
-            GradientStop { position: 0.3; color: "#88FFFFFF" }
-            GradientStop { position: 1.0; color: "#00FFFFFF" }
+            GradientStop { position: 0.0; color: Theme.menuBorderColor }
+            GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+            GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
         }
         Behavior on opacity { NumberAnimation { duration: 150 } }
     }
     LinearGradient {
         id: borderBottomRight
+        visible: Theme.menuHighlightStyle === "separator"
         height: 1
         anchors.bottom: parent.bottom
         anchors.left: separator.horizontalCenter
@@ -125,11 +133,47 @@ Item {
         start: Qt.point(0, 0)
         end: Qt.point(width, 0)
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#88FFFFFF" }
-            GradientStop { position: 0.3; color: "#88FFFFFF" }
-            GradientStop { position: 1.0; color: "#00FFFFFF" }
+            GradientStop { position: 0.0; color: Theme.menuBorderColor }
+            GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+            GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
         }
         Behavior on opacity { NumberAnimation { duration: 150 } }
+    }
+
+    // ========= ROUNDED STYLE (arctic) =========
+    // Center-outward radial glow behind the rounded border
+    RadialGradient {
+        id: roundedGlow
+        visible: Theme.menuHighlightStyle === "rounded"
+        anchors.fill: parent
+        anchors.margins: Dims.w(2)
+        horizontalOffset: 0
+        verticalOffset: 0
+        opacity: root.highlight || clickArea.containsPress ? 1.0 : 0.0
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: Theme.menuHighlightColor }
+            GradientStop { position: 0.35; color: Theme.menuHighlightColor }
+            GradientStop { position: 1.0; color: "transparent" }
+        }
+        Behavior on opacity {
+            NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
+        }
+    }
+
+    // Rounded pill border around the whole item
+    Rectangle {
+        id: roundedBorder
+        visible: Theme.menuHighlightStyle === "rounded"
+        anchors.fill: parent
+        anchors.margins: Dims.w(2)
+        radius: Theme.menuRoundedRadius
+        color: "transparent"
+        border.color: Theme.menuRoundedBorderColor
+        border.width: Theme.menuRoundedBorderWidth
+        opacity: root.highlight || clickArea.containsPress ? 1.0 : 0.0
+        Behavior on opacity {
+            NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
+        }
     }
 
     MouseArea {
@@ -173,7 +217,7 @@ Item {
         id: separator
         width: root.highlight ? 3 : 1
         height: parent.height
-        color: root.highlight ? "#FFFFFF" : "#DDffffff"
+        color: root.highlight ? Theme.separatorActive : Theme.separatorInactive
         anchors {
             verticalCenter: parent.verticalCenter
             horizontalCenter: separatorAnchor.horizontalCenter
@@ -183,6 +227,7 @@ Item {
     Label {
         id: label
         renderType: Text.NativeRendering
+        color: root.highlight ? Theme.menuSelectedText : Theme.menuUnselectedText
         anchors {
             leftMargin: Dims.w(2)
             left: separatorAnchor.right
@@ -190,9 +235,9 @@ Item {
         }
         font {
             pixelSize: labelFontSize
-            family: "Roboto Condensed"
-            weight: root.highlight ? 70 : 52
-            letterSpacing: -0.5
+            family: Theme.fontFamily
+            weight: root.highlight ? Theme.menuSelectedWeight : Theme.menuUnselectedWeight
+            letterSpacing: Theme.letterSpacing
         }
     }
 }

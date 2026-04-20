@@ -18,6 +18,7 @@
 import QtQuick 2.9
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 import Nemo.DBus 2.0
 
 Item {
@@ -87,7 +88,7 @@ Item {
             property bool isBuiltin: model.builtin === true
 
             onClicked: {
-                profilesList.currentIndex = index
+                profileListView.currentIndex = index
                 layerStack.push(profileEditLayer, {profileId: model.id})
             }
 
@@ -142,7 +143,7 @@ Item {
                     //% "No profiles available"
                     text: qsTrId("id-no-profiles")
                     font.pixelSize: Dims.l(6)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     wrapMode: Text.WordWrap
                 }
 
@@ -152,7 +153,7 @@ Item {
                     //% "Service may be unavailable"
                     text: qsTrId("id-service-may-be-unavailable")
                     font.pixelSize: Dims.l(4)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     opacity: 0.6
                     wrapMode: Text.WordWrap
                 }
@@ -160,7 +161,7 @@ Item {
         }
     }
 
-    PageHeader {
+    PageTitle {
         //% "Profiles"
         text: qsTrId("id-profiles")
     }

@@ -18,6 +18,7 @@
 import QtQuick 2.9
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 import Nemo.DBus 2.0
 
 Item {
@@ -232,7 +233,7 @@ Item {
             //% "Loading..."
             text: qsTrId("id-loading")
             font.pixelSize: Dims.l(6)
-            font.family: "Roboto Condensed"
+            font.family: Theme.fontFamily
             opacity: 0.6
         }
     }
@@ -264,7 +265,7 @@ Item {
                 //% "Sensors"
                 text: qsTrId("id-sensors")
                 font.pixelSize: Dims.l(6)
-                font.family: "Roboto Condensed"
+                font.family: Theme.fontFamily
                 opacity: 0.8
             }
 
@@ -403,7 +404,7 @@ Item {
                 //% "Radios"
                 text: qsTrId("id-radios")
                 font.pixelSize: Dims.l(6)
-                font.family: "Roboto Condensed"
+                font.family: Theme.fontFamily
                 opacity: 0.8
             }
 
@@ -524,7 +525,7 @@ Item {
                 //% "System"
                 text: qsTrId("id-system")
                 font.pixelSize: Dims.l(6)
-                font.family: "Roboto Condensed"
+                font.family: Theme.fontFamily
                 opacity: 0.8
             }
 
@@ -588,7 +589,7 @@ Item {
                 //% "Automation"
                 text: qsTrId("id-automation")
                 font.pixelSize: Dims.l(6)
-                font.family: "Roboto Condensed"
+                font.family: Theme.fontFamily
                 opacity: 0.8
             }
 
@@ -637,7 +638,7 @@ Item {
                     //% "Delete Profile"
                     text: qsTrId("id-delete-profile")
                     font.pixelSize: Dims.l(6)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     color: "#F44336"
                 }
 
@@ -653,7 +654,7 @@ Item {
         }
     }
 
-    PageHeader {
+    PageTitle {
         text: profileData.name || qsTrId("id-profiles")
     }
 }

@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<TiltToWake>("org.bolide.settings", 1, 0, "TiltToWake");
     qmlRegisterType<TapToWake>("org.bolide.settings", 1, 0, "TapToWake");
     qmlRegisterType<SysInfo>("org.bolide.settings", 1, 0, "SysInfo");
+    qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "org.bolide.theme", 1, 0, "Theme");
     view->setSource(QUrl("qrc:/qml/main.qml"));
     view->rootContext()->setContextProperty("qtVersion", QString(qVersion()));
     view->rootContext()->setContextProperty("kernelVersion", QString(buf.release));

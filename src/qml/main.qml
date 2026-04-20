@@ -21,13 +21,14 @@ import QtQuick 2.9
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
 import org.bolide.settings 1.0
+import org.bolide.theme 1.0
 import Nemo.Configuration 1.0
 
 Application {
     id: app
 
-    centerColor: "#0044A6"
-    outerColor: "#00010C"
+    centerColor: Theme.appCenterColor
+    outerColor: Theme.appOuterColor
 
     ConfigurationValue {
         id: options
@@ -37,6 +38,17 @@ Application {
             "batteryAnimation": true,
             "batteryColored": false
         }
+    }
+
+    ConfigurationValue {
+        id: themeConfig
+        key: "/org/bolideos/settings/theme"
+        defaultValue: "deepBlue"
+    }
+
+    Component.onCompleted: {
+        if (themeConfig.value !== "deepBlue")
+            Theme.loadTheme(themeConfig.value)
     }
 
     Component { id: quickPanelLayer;         QuickPanelPage { } }
@@ -57,6 +69,7 @@ Application {
     Component { id: powerLayer;                 PowerPage      { } }
     Component { id: powerManagerLayer;          PowerManagerPage { } }
     Component { id: aboutLayer;                 AboutPage      { } }
+    Component { id: themeLayer;                 ThemePage      { } }
 
     TiltToWake { id: tiltToWake }
 
@@ -99,6 +112,8 @@ Application {
                 }
                 //% "Wallpaper"
                 menuModel.append({title: qsTrId("id-wallpaper-page"), iconName: "ios-wallpaper-outline", pageKey: "wallpaper"})
+                //% "Theme"
+                menuModel.append({title: qsTrId("id-theme-page"), iconName: "ios-color-palette-outline", pageKey: "theme"})
                 //% "Watchface"
                 menuModel.append({title: qsTrId("id-watchface-page"), iconName: "ios-watchface-outline", pageKey: "watchface"})
                 //% "Launcher"
@@ -143,7 +158,8 @@ Application {
                     "usb": usbLayer,
                     "power": powerLayer,
                     "powermanager": powerManagerLayer,
-                    "about": aboutLayer
+                    "about": aboutLayer,
+                    "theme": themeLayer
                 }
                 if (pages[key]) layerStack.push(pages[key])
             }

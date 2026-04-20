@@ -18,6 +18,7 @@
 import QtQuick 2.9
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 
 /*
  * BatteryHistoryGraph — Canvas-drawn 7-day battery history chart with
@@ -32,6 +33,10 @@ Canvas {
     property real drainRatePerHour: 0
     property bool isCharging: false
     property string titleText: ""
+
+    // Repaint when theme changes
+    property int _themeVersion: Theme.version
+    on_ThemeVersionChanged: requestPaint()
 
     onHistoryDataChanged: requestPaint()
     onCurrentLevelChanged: requestPaint()
@@ -53,8 +58,8 @@ Canvas {
         // --- Title text in the top padding area ---
         if (titleText.length > 0) {
             ctx.save()
-            ctx.font = Math.round(height * 0.12) + "px Roboto Condensed"
-            ctx.fillStyle = "rgba(255,255,255,0.7)"
+            ctx.font = Math.round(height * Theme.graphTitleSizeFactor) + "px " + Theme.fontFamily
+            ctx.fillStyle = Theme.graphTitleFill
             ctx.textAlign = "center"
             ctx.textBaseline = "top"
             ctx.fillText(titleText, width / 2, height * 0.04)
@@ -78,7 +83,7 @@ Canvas {
 
         // --- Grid background (Garmin-style) ---
         // Horizontal lines at 0%, 25%, 50%, 75%, 100%
-        ctx.strokeStyle = "rgba(80,160,255,0.30)"
+        ctx.strokeStyle = Theme.graphGrid
         ctx.lineWidth = 1
         var hGridLevels = [0, 25, 50, 75, 100]
         for (var g = 0; g < hGridLevels.length; g++) {
@@ -99,14 +104,15 @@ Canvas {
 
         // --- Y-axis labels ---
         var fontSize = Math.max(8, Math.round(height * 0.10))
-        ctx.fillStyle = "rgba(255,255,255,0.5)"
-        ctx.font = fontSize + "px sans-serif"
+        ctx.fillStyle = Theme.graphYAxisLabel
+        ctx.font = fontSize + "px " + Theme.fontFamily
         ctx.textAlign = "right"
         ctx.textBaseline = "middle"
         ctx.fillText("100", leftPad - 3, levelToY(100))
         ctx.fillText("50",  leftPad - 3, levelToY(50))
 
         // --- Day labels ---
+        ctx.fillStyle = Theme.graphXAxisLabel
         ctx.textAlign = "center"
         ctx.textBaseline = "top"
         var dayAbbr = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
@@ -119,14 +125,14 @@ Canvas {
 
         // --- "Now" vertical marker ---
         var nowX = timeToX(now)
-        ctx.strokeStyle = "rgba(255,255,255,0.35)"
+        ctx.strokeStyle = Theme.graphNowLine
         ctx.lineWidth = 1
         ctx.beginPath()
         ctx.moveTo(nowX, topPad)
         ctx.lineTo(nowX, chartBottom)
         ctx.stroke()
 
-        ctx.fillStyle = "rgba(255,255,255,0.4)"
+        ctx.fillStyle = Theme.graphNowText
         ctx.textAlign = "center"
         ctx.textBaseline = "bottom"
         ctx.fillText("now", nowX, topPad - 1)
@@ -194,10 +200,10 @@ Canvas {
                 ctx.closePath()
 
                 var grad = ctx.createLinearGradient(0, topPad, 0, chartBottom)
-                grad.addColorStop(0.0, "rgba(255,152,0,0.70)")
-                grad.addColorStop(0.30, "rgba(255,152,0,0.70)")
-                grad.addColorStop(0.65, "rgba(255,152,0,0.18)")
-                grad.addColorStop(1.0, "rgba(255,152,0,0.02)")
+                grad.addColorStop(0.0, Theme.graphFillTop)
+                grad.addColorStop(Theme.graphFillHold, Theme.graphFillTop)
+                grad.addColorStop(0.65, Theme.graphFillMid)
+                grad.addColorStop(1.0, Theme.graphFillBottom)
                 ctx.fillStyle = grad
                 ctx.fill()
 
@@ -215,9 +221,9 @@ Canvas {
                         ctx.lineTo(cx2, chartBottom)
                         ctx.closePath()
                         var cGrad = ctx.createLinearGradient(0, Math.min(cy1, cy2), 0, chartBottom)
-                        cGrad.addColorStop(0.0, "rgba(76,175,80,0.55)")
-                        cGrad.addColorStop(0.5, "rgba(76,175,80,0.18)")
-                        cGrad.addColorStop(1.0, "rgba(76,175,80,0.01)")
+                        cGrad.addColorStop(0.0, Theme.graphChargingTop)
+                        cGrad.addColorStop(0.5, Theme.graphChargingMid)
+                        cGrad.addColorStop(1.0, Theme.graphChargingBottom)
                         ctx.fillStyle = cGrad
                         ctx.fill()
                     }
@@ -236,7 +242,7 @@ Canvas {
                 ctx.closePath()
                 ctx.clip()
                 ctx.lineWidth = 1
-                ctx.strokeStyle = "rgba(255,180,60,0.45)"
+                ctx.strokeStyle = Theme.graphGlow
                 for (var gh = 0; gh < hGridLevels.length; gh++) {
                     var ghy = levelToY(hGridLevels[gh])
                     ctx.beginPath()
@@ -256,7 +262,7 @@ Canvas {
                 ctx.beginPath()
                 ctx.moveTo(pts[0].x, pts[0].y)
                 traceSmoothSegments(ctx, pts)
-                ctx.strokeStyle = "#FF9800"
+                ctx.strokeStyle = Theme.graphLineColor
                 ctx.lineWidth = 2
                 ctx.stroke()
 
@@ -265,7 +271,7 @@ Canvas {
                 var py = levelToY(visible[0].level)
                 ctx.beginPath()
                 ctx.arc(px, py, 3, 0, 2 * Math.PI)
-                ctx.fillStyle = "#FF9800"
+                ctx.fillStyle = Theme.graphLineColor
                 ctx.fill()
             }
         }
@@ -285,7 +291,7 @@ Canvas {
                 predEndY = predStartY + ratio * (levelToY(0) - predStartY)
             }
 
-            ctx.strokeStyle = "#F44336"
+            ctx.strokeStyle = Theme.graphPrediction
             ctx.lineWidth = 1.5
             var pdx = predEndX - predStartX
             var pdy = predEndY - predStartY

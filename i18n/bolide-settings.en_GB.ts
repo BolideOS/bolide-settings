@@ -681,6 +681,13 @@
         <source>Battery Charge</source>
         <translation>Battery Charge</translation>
     </message>
+    <message id="id-theme-page">
+        <location/>
+        <source>Theme</source>
+        <translation>Theme</translation>
+    </message>
+<message id="id-usb-mode-page">            <source>USB Mode</source>            <translation>USB Mode</translation>        </message>
+<message id="id-language-page">            <source>Language</source>            <translation>Language</translation>        </message>
 </context>
 <context>
     <name>AboutPage</name>
@@ -809,5 +816,12 @@
         <source>Battery Charge</source>
         <translation>Battery Charge</translation>
     </message>
+    <message id="id-theme-page">
+        <location/>
+        <source>Theme</source>
+        <translation>Theme</translation>
+    </message>
+<message id="id-usb-mode-page">            <source>USB Mode</source>            <translation>USB Mode</translation>        </message>
+<message id="id-language-page">            <source>Language</source>            <translation>Language</translation>        </message>
 </context>
 </TS>

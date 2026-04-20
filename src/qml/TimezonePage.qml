@@ -22,6 +22,7 @@
 import QtQuick 2.9
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 import Nemo.DBus 2.0
 
 Item {
@@ -133,5 +134,10 @@ Item {
         service: "org.freedesktop.timedate1"
         path: "/org/freedesktop/timedate1"
         iface: "org.freedesktop.timedate1"
+    }
+
+    PageTitle {
+        //% "Timezone"
+        text: qsTrId("id-timezone-page")
     }
 }

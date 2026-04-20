@@ -23,6 +23,7 @@ import Qt.labs.folderlistmodel 2.1
 import Nemo.Configuration 1.0
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 
 
 Item {
@@ -49,6 +50,7 @@ Item {
         cellWidth: Dims.w(50)
         cellHeight: Dims.h(40)
         anchors.fill: parent
+        visible: folderModel.count > 0
 
         model: FolderListModel {
             id: folderModel
@@ -75,17 +77,28 @@ Item {
             Item {
                 width: grid.cellWidth
                 height: grid.cellHeight
-                Image {
-                    id: img
 
+                Rectangle {
                     anchors.fill: parent
-                    fillMode: Image.PreserveAspectCrop
+                    anchors.margins: 1
+                    color: "transparent"
+                    border.color: Theme.menuBorderColor
+                    border.width: 1
+                    radius: 2
+
+                    Image {
+                        id: img
+
+                        anchors.fill: parent
+                        anchors.margins: 1
+                        fillMode: Image.PreserveAspectCrop
                     // If a pre-scaled thumbnail file exists, use that.
                     source: FileInfo.exists((assetPath + Dims.w(50) + "/" + fileName).slice(7)) ?
                                 assetPath + Dims.w(50) + "/" + fileName :
                                 // Else use the full resolution wallpaper with negative impact on performance, as failsafe.
                                 folderModel.folder + "/" + fileName
                     asynchronous: true
+                    }
                 }
 
                 MouseArea {
@@ -138,5 +151,16 @@ Item {
                 }
             }
         }
+    }
+
+    Label {
+        anchors.centerIn: parent
+        visible: folderModel.status === FolderListModel.Ready && folderModel.count === 0
+        //% "No wallpapers found"
+        text: qsTrId("id-no-wallpapers")
+        font.pixelSize: Dims.l(5)
+        font.family: "Roboto Condensed"
+        opacity: 0.5
+        horizontalAlignment: Text.AlignHCenter
     }
 }

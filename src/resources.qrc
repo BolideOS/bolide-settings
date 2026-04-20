@@ -28,5 +28,9 @@
         <file>qml/CompactListItem.qml</file>
         <file>qml/SnapListView.qml</file>
         <file>qml/BatteryHistoryGraph.qml</file>
+        <file>qml/Theme.qml</file>
+        <file>qml/ThemePage.qml</file>
+        <file>qml/PageTitle.qml</file>
+        <file>qml/ThemedSlider.qml</file>
     </qresource>
 </RCC>

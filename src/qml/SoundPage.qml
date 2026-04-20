@@ -20,6 +20,7 @@ import QtQuick 2.9
 import QtMultimedia 5.8
 import org.asteroid.controls 1.0
 import org.bolide.settings 1.0
+import org.bolide.theme 1.0
 import Nemo.Configuration 1.0
 
 
@@ -73,13 +74,13 @@ Item {
             width: parent.width
             height: Dims.l(12)
             font.pixelSize: Dims.l(6)
-            font.family: "Roboto Condensed"
+            font.family: Theme.fontFamily
             verticalAlignment: Text.AlignBottom
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
         }
 
-        IntSelector {
+        ThemedSlider {
             width: parent.width
             height: Dims.h(25)
             stepSize: 10

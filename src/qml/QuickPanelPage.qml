@@ -19,6 +19,7 @@ import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 import Nemo.Configuration 1.0
 import Nemo.Mce 1.0
 
@@ -492,9 +493,9 @@ Item {
                     opacity: dragArea.pressed ? 1.0 : 0.0
                     start: Qt.point(width, 0); end: Qt.point(0, 0)
                     gradient: Gradient {
-                        GradientStop { position: 0.0; color: "#CC1785DD" }
-                        GradientStop { position: 0.3; color: "#CC1785DD" }
-                        GradientStop { position: 1.0; color: "#00000000" }
+                        GradientStop { position: 0.0; color: Theme.menuHighlightColor }
+                        GradientStop { position: Theme.menuHighlightHold; color: Theme.menuHighlightColor }
+                        GradientStop { position: 1.0; color: "transparent" }
                     }
                     Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
                 }
@@ -506,9 +507,9 @@ Item {
                     opacity: dragArea.pressed ? 1.0 : 0.0
                     start: Qt.point(0, 0); end: Qt.point(width, 0)
                     gradient: Gradient {
-                        GradientStop { position: 0.0; color: "#CC1785DD" }
-                        GradientStop { position: 0.3; color: "#CC1785DD" }
-                        GradientStop { position: 1.0; color: "#00000000" }
+                        GradientStop { position: 0.0; color: Theme.menuHighlightColor }
+                        GradientStop { position: Theme.menuHighlightHold; color: Theme.menuHighlightColor }
+                        GradientStop { position: 1.0; color: "transparent" }
                     }
                     Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
                 }
@@ -520,9 +521,9 @@ Item {
                     opacity: dragArea.pressed ? 1.0 : 0.0
                     start: Qt.point(width, 0); end: Qt.point(0, 0)
                     gradient: Gradient {
-                        GradientStop { position: 0.0; color: "#88FFFFFF" }
-                        GradientStop { position: 0.3; color: "#88FFFFFF" }
-                        GradientStop { position: 1.0; color: "#00FFFFFF" }
+                        GradientStop { position: 0.0; color: Theme.menuBorderColor }
+                        GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+                        GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
                     }
                     Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
@@ -532,9 +533,9 @@ Item {
                     opacity: dragArea.pressed ? 1.0 : 0.0
                     start: Qt.point(0, 0); end: Qt.point(width, 0)
                     gradient: Gradient {
-                        GradientStop { position: 0.0; color: "#88FFFFFF" }
-                        GradientStop { position: 0.3; color: "#88FFFFFF" }
-                        GradientStop { position: 1.0; color: "#00FFFFFF" }
+                        GradientStop { position: 0.0; color: Theme.menuBorderColor }
+                        GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+                        GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
                     }
                     Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
@@ -545,9 +546,9 @@ Item {
                     opacity: dragArea.pressed ? 1.0 : 0.0
                     start: Qt.point(width, 0); end: Qt.point(0, 0)
                     gradient: Gradient {
-                        GradientStop { position: 0.0; color: "#88FFFFFF" }
-                        GradientStop { position: 0.3; color: "#88FFFFFF" }
-                        GradientStop { position: 1.0; color: "#00FFFFFF" }
+                        GradientStop { position: 0.0; color: Theme.menuBorderColor }
+                        GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+                        GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
                     }
                     Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
@@ -557,9 +558,9 @@ Item {
                     opacity: dragArea.pressed ? 1.0 : 0.0
                     start: Qt.point(0, 0); end: Qt.point(width, 0)
                     gradient: Gradient {
-                        GradientStop { position: 0.0; color: "#88FFFFFF" }
-                        GradientStop { position: 0.3; color: "#88FFFFFF" }
-                        GradientStop { position: 1.0; color: "#00FFFFFF" }
+                        GradientStop { position: 0.0; color: Theme.menuBorderColor }
+                        GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+                        GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
                     }
                     Behavior on opacity { NumberAnimation { duration: 150 } }
                 }
@@ -567,9 +568,9 @@ Item {
                 Label {
                     visible: type === "label"
                     text: labelText
-                    color: "#ffffff"
+                    color: Theme.textPrimary
                     font.pixelSize: Dims.l(6)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     font.italic: true
                     anchors {
                         horizontalCenter: parent.horizontalCenter
@@ -657,7 +658,7 @@ Item {
                     width: Dims.w(16)
                     height: Dims.w(16)
                     radius: width / 2
-                    color: "#222222"
+                    color: Theme.surfaceDimColor
                     opacity: toggleId ? (toggleEnabled.value[toggleId] ? 0.7 : 0.3) : 0;
                     visible: type === "toggle" && toggleId !== "" && !isDragging
                     anchors {
@@ -671,7 +672,7 @@ Item {
                         width: Dims.w(10)
                         height: Dims.w(10)
                         anchors.centerIn: parent
-                        color: "#ffffff"
+                        color: Theme.textPrimary
                         opacity: toggleId ? (toggleEnabled.value[toggleId] ? 1.0 : 0.8) : 0;
                         visible: toggleId !== ""
                     }
@@ -680,7 +681,7 @@ Item {
                 Label {
                     text: toggle ? toggle.name : null
                     renderType: Text.NativeRendering
-                    color: "#ffffff"
+                    color: Theme.textPrimary
                     opacity: toggleId ? (toggleEnabled.value[toggleId] ? 1.0 : 0.6) : 0;
                     visible: type === "toggle" && toggleId !== "" && !isDragging
                     anchors {
@@ -690,7 +691,7 @@ Item {
                     }
                     font {
                         pixelSize: Dims.l(9)
-                        family: "Roboto Condensed"
+                        family: Theme.fontFamily
                         weight: Font.Normal
                         letterSpacing: -0.5
                     }
@@ -902,9 +903,9 @@ Item {
             anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: dragIconRect.right }
             start: Qt.point(width, 0); end: Qt.point(0, 0)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#CC1785DD" }
-                GradientStop { position: 0.3; color: "#CC1785DD" }
-                GradientStop { position: 1.0; color: "#00000000" }
+                GradientStop { position: 0.0; color: Theme.menuHighlightColor }
+                GradientStop { position: Theme.menuHighlightHold; color: Theme.menuHighlightColor }
+                GradientStop { position: 1.0; color: "transparent" }
             }
         }
         // Gradient highlight — right half
@@ -912,9 +913,9 @@ Item {
             anchors { top: parent.top; bottom: parent.bottom; left: dragIconRect.right; right: parent.right }
             start: Qt.point(0, 0); end: Qt.point(width, 0)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#CC1785DD" }
-                GradientStop { position: 0.3; color: "#CC1785DD" }
-                GradientStop { position: 1.0; color: "#00000000" }
+                GradientStop { position: 0.0; color: Theme.menuHighlightColor }
+                GradientStop { position: Theme.menuHighlightHold; color: Theme.menuHighlightColor }
+                GradientStop { position: 1.0; color: "transparent" }
             }
         }
 
@@ -923,18 +924,18 @@ Item {
             height: 1; anchors { top: parent.top; left: parent.left; right: dragIconRect.right }
             start: Qt.point(width, 0); end: Qt.point(0, 0)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#88FFFFFF" }
-                GradientStop { position: 0.3; color: "#88FFFFFF" }
-                GradientStop { position: 1.0; color: "#00FFFFFF" }
+                GradientStop { position: 0.0; color: Theme.menuBorderColor }
+                GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+                GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
             }
         }
         LinearGradient {
             height: 1; anchors { top: parent.top; left: dragIconRect.right; right: parent.right }
             start: Qt.point(0, 0); end: Qt.point(width, 0)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#88FFFFFF" }
-                GradientStop { position: 0.3; color: "#88FFFFFF" }
-                GradientStop { position: 1.0; color: "#00FFFFFF" }
+                GradientStop { position: 0.0; color: Theme.menuBorderColor }
+                GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+                GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
             }
         }
         // Bottom border — drag proxy
@@ -942,18 +943,18 @@ Item {
             height: 1; anchors { bottom: parent.bottom; left: parent.left; right: dragIconRect.right }
             start: Qt.point(width, 0); end: Qt.point(0, 0)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#88FFFFFF" }
-                GradientStop { position: 0.3; color: "#88FFFFFF" }
-                GradientStop { position: 1.0; color: "#00FFFFFF" }
+                GradientStop { position: 0.0; color: Theme.menuBorderColor }
+                GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+                GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
             }
         }
         LinearGradient {
             height: 1; anchors { bottom: parent.bottom; left: dragIconRect.right; right: parent.right }
             start: Qt.point(0, 0); end: Qt.point(width, 0)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#88FFFFFF" }
-                GradientStop { position: 0.3; color: "#88FFFFFF" }
-                GradientStop { position: 1.0; color: "#00FFFFFF" }
+                GradientStop { position: 0.0; color: Theme.menuBorderColor }
+                GradientStop { position: Theme.menuBorderHold; color: Theme.menuBorderColor }
+                GradientStop { position: 1.0; color: Qt.rgba(Theme.menuBorderColor.r, Theme.menuBorderColor.g, Theme.menuBorderColor.b, 0) }
             }
         }
 
@@ -962,7 +963,7 @@ Item {
             width: Dims.w(16)
             height: Dims.w(16)
             radius: width / 2
-            color: "#222222"
+            color: Theme.surfaceDimColor
             opacity: 0.8
             anchors {
                 verticalCenter: parent.verticalCenter
@@ -974,7 +975,7 @@ Item {
                 width: Dims.w(10)
                 height: Dims.w(10)
                 anchors.centerIn: parent
-                color: "#ffffff"
+                color: Theme.textPrimary
                 visible: dragProxy.icon !== ""
             }
         }
@@ -982,7 +983,7 @@ Item {
         Label {
             text: dragProxy.text
             renderType: Text.NativeRendering
-            color: "#ffffff"
+            color: Theme.textPrimary
             opacity: 0.9
             anchors {
                 verticalCenter: parent.verticalCenter
@@ -991,7 +992,7 @@ Item {
             }
             font {
                 pixelSize: Dims.l(9)
-                family: "Roboto Condensed"
+                family: Theme.fontFamily
                 weight: Font.Normal
                 letterSpacing: -0.5
             }

@@ -22,6 +22,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 import org.bolide.settings 1.0
 import org.nemomobile.systemsettings 1.0 as NemoSystemSettings
 import Nemo.Configuration 1.0
@@ -113,13 +114,13 @@ Item {
                     width: parent.width
                     height: Dims.l(12)
                     font.pixelSize: Dims.l(6)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     verticalAlignment: Text.AlignBottom
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.Wrap
                 }
 
-                IntSelector {
+                ThemedSlider {
                     width: parent.width
                     height: rowHeight
                     stepSize: 10
@@ -133,13 +134,13 @@ Item {
                     width: parent.width
                     height: Dims.l(12)
                     font.pixelSize: Dims.l(6)
-                    font.family: "Roboto Condensed"
+                    font.family: Theme.fontFamily
                     verticalAlignment: Text.AlignBottom
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.Wrap
                 }
 
-                IntSelector {
+                ThemedSlider {
                     width: parent.width
                     height: rowHeight
                     stepSize: 5
@@ -193,8 +194,7 @@ Item {
         }
     }
 
-    PageHeader {
-        id: title
+    PageTitle {
         text: qsTrId("id-nightstand-page")
     }
 }

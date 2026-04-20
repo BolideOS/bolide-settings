@@ -19,6 +19,7 @@
 import QtQuick 2.9
 import org.asteroid.controls 1.0
 import org.asteroid.utils 1.0
+import org.bolide.theme 1.0
 import org.nemomobile.systemsettings 1.0
 
 Item {
@@ -92,8 +93,7 @@ Item {
         }
     }
 
-    PageHeader {
-        id: title
+    PageTitle {
         text: qsTrId("id-date-page")
     }
 }
