@@ -31,6 +31,44 @@ Application {
     outerColor: Theme.appOuterColor
 
     ConfigurationValue {
+        id: wallpaperSource
+        key: "/desktop/bolide/background-filename"
+        defaultValue: ""
+
+        function updateWallpaper() {
+            var endsWithQml = /qml$/;
+            if (wallpaperSource.value && wallpaperSource.value !== "") {
+                if (endsWithQml.test(wallpaperSource.value)) {
+                    wallpaperLoader.sourceComponent = undefined
+                    wallpaperLoader.source = wallpaperSource.value
+                } else {
+                    wallpaperLoader.source = ""
+                    wallpaperLoader.sourceComponent = imageWallpaper
+                }
+            } else {
+                wallpaperLoader.source = ""
+                wallpaperLoader.sourceComponent = undefined
+            }
+        }
+        Component.onCompleted: updateWallpaper()
+        onValueChanged: updateWallpaper()
+    }
+
+    Component {
+        id: imageWallpaper
+        Image {
+            source: wallpaperSource.value
+            fillMode: Image.PreserveAspectCrop
+        }
+    }
+
+    Loader {
+        id: wallpaperLoader
+        anchors.fill: parent
+        z: -1
+    }
+
+    ConfigurationValue {
         id: options
         key: "/desktop/bolide/quickpanel/options"
         defaultValue: {
