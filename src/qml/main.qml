@@ -65,7 +65,7 @@ Application {
     Loader {
         id: wallpaperLoader
         anchors.fill: parent
-        z: -1
+        z: 1
     }
 
     ConfigurationValue {
@@ -113,6 +113,7 @@ Application {
 
     LayerStack {
         id: layerStack
+        z: 2
 
         firstPage: firstPageComponent
     }
