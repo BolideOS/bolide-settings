@@ -30,6 +30,11 @@ Application {
     centerColor: Theme.appCenterColor
     outerColor: Theme.appOuterColor
 
+    // Provide bgCenterColor/bgOuterColor for QML wallpapers (e.g. flatmesh.qml)
+    // that expect these from the launcher's context.
+    property color bgCenterColor: Theme.appCenterColor
+    property color bgOuterColor: Theme.appOuterColor
+
     ConfigurationValue {
         id: wallpaperSource
         key: "/desktop/bolide/background-filename"
