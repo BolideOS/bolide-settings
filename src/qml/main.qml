@@ -86,11 +86,11 @@ Application {
     ConfigurationValue {
         id: themeConfig
         key: "/org/bolideos/settings/theme"
-        defaultValue: "deepBlue"
+        defaultValue: "classic"
     }
 
     Component.onCompleted: {
-        if (themeConfig.value !== "deepBlue")
+        if (themeConfig.value !== "classic")
             Theme.loadTheme(themeConfig.value)
     }
 
@@ -213,5 +213,17 @@ Application {
         while (layerStack.layers.length > 0) {
             layerStack.pop(layerStack.currentLayer)
         }
+    }
+
+    function canGoBack() {
+        return layerStack.layers.length > 0
+    }
+
+    function goBack() {
+        if (layerStack.layers.length > 0) {
+            layerStack.pop(layerStack.currentLayer)
+            return true
+        }
+        return false
     }
 }

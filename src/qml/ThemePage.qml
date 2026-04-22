@@ -14,7 +14,7 @@ Item {
     ConfigurationValue {
         id: themeConfig
         key: "/org/bolideos/settings/theme"
-        defaultValue: "deepBlue"
+        defaultValue: "classic"
     }
 
     SnapListView {

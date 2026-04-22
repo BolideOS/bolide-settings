@@ -97,6 +97,17 @@ Item {
                         "always_on_display": true,
                         "tilt_to_wake": true
                     },
+                    "cpu": {
+                        "governor": "auto",
+                        "max_cores": 0,
+                        "screen_boost": true
+                    },
+                    "processes": {
+                        "audio_enabled": true,
+                        "pulseaudio": "auto",
+                        "btsyncd": "auto",
+                        "mce": "auto"
+                    },
                     "automation": {
                         "battery_rules": [],
                         "time_rules": [],
@@ -181,6 +192,20 @@ Item {
     function updateSystemSetting(setting, value) {
         if (!profileData.system) profileData.system = {}
         profileData.system[setting] = value
+        profileData = profileData
+        persistProfile()
+    }
+
+    function updateCpuSetting(setting, value) {
+        if (!profileData.cpu) profileData.cpu = {}
+        profileData.cpu[setting] = value
+        profileData = profileData
+        persistProfile()
+    }
+
+    function updateProcessSetting(setting, value) {
+        if (!profileData.processes) profileData.processes = {}
+        profileData.processes[setting] = value
         profileData = profileData
         persistProfile()
     }
@@ -571,6 +596,137 @@ Item {
                 onValueChanged: {
                     currentValue = value
                     updateSystemSetting("background_sync", value)
+                }
+            }
+
+            RowSeparator {}
+
+            Item {
+                width: parent.width
+                height: Dims.h(5)
+            }
+
+            Label {
+                width: parent.width
+                height: Dims.h(10)
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                //% "CPU"
+                text: qsTrId("id-cpu")
+                font.pixelSize: Dims.l(6)
+                font.family: Theme.fontFamily
+                opacity: 0.8
+            }
+
+            RowSeparator {}
+
+            FillBarRow {
+                height: Dims.h(15)
+                width: parent.width
+                //% "Governor"
+                text: qsTrId("id-cpu-governor")
+                valueArray: ["auto", "powersave", "schedutil", "ondemand", "performance"]
+                currentValue: profileData.cpu ? profileData.cpu.governor : "auto"
+                onValueChanged: {
+                    currentValue = value
+                    updateCpuSetting("governor", value)
+                }
+            }
+
+            RowSeparator {}
+
+            FillBarRow {
+                height: Dims.h(15)
+                width: parent.width
+                //% "Max\nCores"
+                text: qsTrId("id-max-cores")
+                valueArray: ["auto", "1", "2", "3", "4"]
+                currentValue: {
+                    var v = profileData.cpu ? profileData.cpu.max_cores : 0
+                    return v <= 0 ? "auto" : "" + v
+                }
+                onValueChanged: {
+                    currentValue = value
+                    updateCpuSetting("max_cores", value === "auto" ? 0 : parseInt(value))
+                }
+            }
+
+            RowSeparator {}
+
+            FillBarRow {
+                height: Dims.h(15)
+                width: parent.width
+                //% "Screen\nBoost"
+                text: qsTrId("id-screen-boost")
+                valueArray: ["off", "on"]
+                currentValue: profileData.cpu && profileData.cpu.screen_boost ? "on" : "off"
+                onValueChanged: {
+                    currentValue = value
+                    updateCpuSetting("screen_boost", value === "on")
+                }
+            }
+
+            RowSeparator {}
+
+            Item {
+                width: parent.width
+                height: Dims.h(5)
+            }
+
+            Label {
+                width: parent.width
+                height: Dims.h(10)
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                //% "Services"
+                text: qsTrId("id-services")
+                font.pixelSize: Dims.l(6)
+                font.family: Theme.fontFamily
+                opacity: 0.8
+            }
+
+            RowSeparator {}
+
+            FillBarRow {
+                height: Dims.h(15)
+                width: parent.width
+                //% "Audio\nModules"
+                text: qsTrId("id-audio-modules")
+                valueArray: ["off", "on"]
+                currentValue: profileData.processes && profileData.processes.audio_enabled ? "on" : "off"
+                onValueChanged: {
+                    currentValue = value
+                    updateProcessSetting("audio_enabled", value === "on")
+                }
+            }
+
+            RowSeparator {}
+
+            FillBarRow {
+                height: Dims.h(15)
+                width: parent.width
+                //% "PulseAudio"
+                text: qsTrId("id-pulseaudio")
+                valueArray: ["auto", "started", "stopped"]
+                currentValue: profileData.processes ? profileData.processes.pulseaudio : "auto"
+                onValueChanged: {
+                    currentValue = value
+                    updateProcessSetting("pulseaudio", value)
+                }
+            }
+
+            RowSeparator {}
+
+            FillBarRow {
+                height: Dims.h(15)
+                width: parent.width
+                //% "BT Sync"
+                text: qsTrId("id-btsyncd")
+                valueArray: ["auto", "started", "stopped"]
+                currentValue: profileData.processes ? profileData.processes.btsyncd : "auto"
+                onValueChanged: {
+                    currentValue = value
+                    updateProcessSetting("btsyncd", value)
                 }
             }
 

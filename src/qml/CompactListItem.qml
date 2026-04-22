@@ -25,6 +25,33 @@ Item {
     width: parent ? parent.width : 0
     height: Dims.h(17)
 
+    // ========= CLASSIC STYLE (flat, no gradients/shaders) =========
+    Rectangle {
+        id: classicHighlight
+        visible: Theme.menuHighlightStyle === "classic"
+        anchors.fill: parent
+        color: root.highlight || clickArea.containsPress ? Theme.menuHighlightColor : "transparent"
+        Behavior on color {
+            ColorAnimation { duration: 100 }
+        }
+    }
+    Rectangle {
+        visible: Theme.menuHighlightStyle === "classic" && (root.highlight || clickArea.containsPress)
+        height: 1
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        color: Theme.menuBorderColor
+    }
+    Rectangle {
+        visible: Theme.menuHighlightStyle === "classic" && (root.highlight || clickArea.containsPress)
+        height: 1
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        color: Theme.menuBorderColor
+    }
+
     // ========= SEPARATOR STYLE (deepBlue / ember) =========
     // Gradient radiating from separator line toward left edge (icon area)
     LinearGradient {

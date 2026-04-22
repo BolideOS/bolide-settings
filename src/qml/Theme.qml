@@ -20,10 +20,10 @@ QtObject {
     property int version: 0
 
     // Current theme identifier
-    property string currentTheme: "deepBlue"
+    property string currentTheme: "classic"
 
     // Available theme keys
-    readonly property var themeNames: ["deepBlue", "ember", "arctic"]
+    readonly property var themeNames: ["classic", "deepBlue", "ember", "arctic"]
 
     // ================================================================
     // STATIC: FONTS (same across all themes)
@@ -55,7 +55,7 @@ QtObject {
     readonly property int menuUnselectedWeight: 52
 
     // Graph title sizing
-    readonly property real graphTitleSizeFactor: 0.12
+    readonly property real graphTitleSizeFactor: 0.22
     readonly property int graphTitleWeight: 50
 
     // ================================================================
@@ -63,8 +63,8 @@ QtObject {
     // ================================================================
 
     // --- App Background ---
-    property color appCenterColor: "#0044A6"
-    property color appOuterColor: "#00010C"
+    property color appCenterColor: "#000000"
+    property color appOuterColor: "#000000"
 
     // --- Text Colors (never fully transparent) ---
     property color textPrimary: "#FFFFFF"
@@ -73,14 +73,14 @@ QtObject {
     property color textAccent: "#FFD700"
 
     // --- Menu Highlight Gradient ---
-    property color menuHighlightColor: "#CC1785DD"
+    property color menuHighlightColor: "#44FFFFFF"
     property real menuHighlightHold: 0.3
-    property string menuHighlightStyle: "separator"   // "separator" = Garmin-style, "rounded" = pill-border
+    property string menuHighlightStyle: "classic"   // "classic" = flat, "separator" = Garmin-style, "rounded" = pill-border
     property color menuSelectedText: "#FFFFFF"
-    property color menuUnselectedText: "#FFFFFF"
+    property color menuUnselectedText: "#AAFFFFFF"
 
     // --- Menu Border Gradient ---
-    property color menuBorderColor: "#88FFFFFF"
+    property color menuBorderColor: "#44FFFFFF"
     property real menuBorderHold: 0.3
 
     // --- Rounded highlight (used when menuHighlightStyle === "rounded") ---
@@ -115,22 +115,23 @@ QtObject {
     property color graphBorderColor: "#6650C0FF"
 
     // --- Graph: Canvas-side (string type, rgba for JS context) ---
-    property string graphLineColor: "#FF9800"
-    property string graphFillTop: "rgba(255,152,0,0.70)"
+    // Opacities tuned for AMOLED (true black background needs stronger colors)
+    property string graphLineColor: "#FFB74D"
+    property string graphFillTop: "rgba(255,152,0,0.85)"
     property real graphFillHold: 0.30
-    property string graphFillMid: "rgba(255,152,0,0.18)"
-    property string graphFillBottom: "rgba(255,152,0,0.02)"
-    property string graphGrid: "rgba(80,160,255,0.30)"
-    property string graphGlow: "rgba(255,180,60,0.45)"
-    property string graphTitleFill: "rgba(100,200,255,0.85)"
-    property string graphXAxisLabel: "rgba(255,200,100,0.6)"
-    property string graphYAxisLabel: "rgba(160,220,255,0.6)"
-    property string graphChargingTop: "rgba(76,175,80,0.55)"
-    property string graphChargingMid: "rgba(76,175,80,0.18)"
-    property string graphChargingBottom: "rgba(76,175,80,0.01)"
-    property string graphNowLine: "rgba(0,220,255,0.45)"
-    property string graphNowText: "rgba(0,220,255,0.65)"
-    property string graphDayLabel: "rgba(255,255,255,0.5)"
+    property string graphFillMid: "rgba(255,152,0,0.40)"
+    property string graphFillBottom: "rgba(255,152,0,0.05)"
+    property string graphGrid: "rgba(80,160,255,0.50)"
+    property string graphGlow: "rgba(255,180,60,0.60)"
+    property string graphTitleFill: "rgba(100,200,255,1.0)"
+    property string graphXAxisLabel: "rgba(255,200,100,0.85)"
+    property string graphYAxisLabel: "rgba(160,220,255,0.85)"
+    property string graphChargingTop: "rgba(76,175,80,0.75)"
+    property string graphChargingMid: "rgba(76,175,80,0.35)"
+    property string graphChargingBottom: "rgba(76,175,80,0.05)"
+    property string graphNowLine: "rgba(0,220,255,0.70)"
+    property string graphNowText: "rgba(0,220,255,0.90)"
+    property string graphDayLabel: "rgba(255,255,255,0.75)"
     property string graphPrediction: "#F44336"
 
     // --- Graded intensity colors ---
@@ -151,6 +152,62 @@ QtObject {
     // THEME DEFINITIONS
     // ================================================================
     readonly property var _themes: ({
+        "classic": {
+            "appCenterColor": "#000000",
+            "appOuterColor": "#000000",
+            "menuHighlightStyle": "classic",
+            "menuRoundedRadius": 0,
+            "menuRoundedBorderWidth": 0,
+            "menuRoundedBorderColor": "transparent",
+            "textPrimary": "#FFFFFF",
+            "textSecondary": "#AAFFFFFF",
+            "textDisabled": "#55FFFFFF",
+            "textAccent": "#FFFFFF",
+            "menuHighlightColor": "#44FFFFFF",
+            "menuHighlightHold": 0.3,
+            "menuSelectedText": "#FFFFFF",
+            "menuUnselectedText": "#AAFFFFFF",
+            "menuBorderColor": "#44FFFFFF",
+            "menuBorderHold": 0.3,
+            "separatorActive": "#FFFFFF",
+            "separatorInactive": "#55FFFFFF",
+            "iconActive": "#FFFFFF",
+            "iconInactive": "#88FFFFFF",
+            "iconDisabled": "#44FFFFFF",
+            "buttonActiveBackground": "#44FFFFFF",
+            "buttonActiveForeground": "#FFFFFF",
+            "buttonInactiveBackground": "#22FFFFFF",
+            "buttonInactiveForeground": "#AAFFFFFF",
+            "sliderFillColor": "#FFFFFF",
+            "surfaceColor": "#222222",
+            "surfaceDimColor": "#111111",
+            "cardGradientOpacity": 0.0,
+            "graphBorderColor": "#66FFFFFF",
+            "graphLineColor": "#FFFFFF",
+            "graphFillTop": "rgba(255,255,255,0.60)",
+            "graphFillHold": 0.30,
+            "graphFillMid": "rgba(255,255,255,0.25)",
+            "graphFillBottom": "rgba(255,255,255,0.05)",
+            "graphGrid": "rgba(255,255,255,0.35)",
+            "graphGlow": "rgba(255,255,255,0.40)",
+            "graphTitleFill": "rgba(255,255,255,1.0)",
+            "graphXAxisLabel": "rgba(255,255,255,0.80)",
+            "graphYAxisLabel": "rgba(255,255,255,0.80)",
+            "graphChargingTop": "rgba(255,255,255,0.60)",
+            "graphChargingMid": "rgba(255,255,255,0.25)",
+            "graphChargingBottom": "rgba(255,255,255,0.05)",
+            "graphNowLine": "rgba(255,255,255,0.70)",
+            "graphNowText": "rgba(255,255,255,0.90)",
+            "graphDayLabel": "rgba(255,255,255,0.75)",
+            "graphPrediction": "#FF4444",
+            "gradeLow": "#00E676",
+            "gradeMid": "#FFEA00",
+            "gradeHigh": "#FF1744",
+            "healthGood": "#4CAF50",
+            "healthOk": "#FF9800",
+            "healthWarn": "#FF5722",
+            "healthBad": "#F44336"
+        },
         "deepBlue": {
             "appCenterColor": "#0044A6",
             "menuHighlightStyle": "separator",
@@ -181,23 +238,23 @@ QtObject {
             "surfaceColor": "#333333",
             "surfaceDimColor": "#222222",
             "cardGradientOpacity": 0.90,
-            "graphBorderColor": "#6650C0FF",
-            "graphLineColor": "#FF9800",
-            "graphFillTop": "rgba(255,152,0,0.70)",
+            "graphBorderColor": "#8850C0FF",
+            "graphLineColor": "#FFB74D",
+            "graphFillTop": "rgba(255,152,0,0.85)",
             "graphFillHold": 0.30,
-            "graphFillMid": "rgba(255,152,0,0.18)",
-            "graphFillBottom": "rgba(255,152,0,0.02)",
-            "graphGrid": "rgba(80,160,255,0.30)",
-            "graphGlow": "rgba(255,180,60,0.45)",
-            "graphTitleFill": "rgba(100,200,255,0.85)",
-            "graphXAxisLabel": "rgba(255,200,100,0.6)",
-            "graphYAxisLabel": "rgba(160,220,255,0.6)",
-            "graphChargingTop": "rgba(76,175,80,0.55)",
-            "graphChargingMid": "rgba(76,175,80,0.18)",
-            "graphChargingBottom": "rgba(76,175,80,0.01)",
-            "graphNowLine": "rgba(0,220,255,0.45)",
-            "graphNowText": "rgba(0,220,255,0.65)",
-            "graphDayLabel": "rgba(255,255,255,0.5)",
+            "graphFillMid": "rgba(255,152,0,0.40)",
+            "graphFillBottom": "rgba(255,152,0,0.05)",
+            "graphGrid": "rgba(80,160,255,0.50)",
+            "graphGlow": "rgba(255,180,60,0.60)",
+            "graphTitleFill": "rgba(100,200,255,1.0)",
+            "graphXAxisLabel": "rgba(255,200,100,0.85)",
+            "graphYAxisLabel": "rgba(160,220,255,0.85)",
+            "graphChargingTop": "rgba(76,175,80,0.75)",
+            "graphChargingMid": "rgba(76,175,80,0.35)",
+            "graphChargingBottom": "rgba(76,175,80,0.05)",
+            "graphNowLine": "rgba(0,220,255,0.70)",
+            "graphNowText": "rgba(0,220,255,0.90)",
+            "graphDayLabel": "rgba(255,255,255,0.75)",
             "graphPrediction": "#F44336",
             "gradeLow": "#00E676",
             "gradeMid": "#FFEA00",
@@ -237,23 +294,23 @@ QtObject {
             "surfaceColor": "#3D2B1F",
             "surfaceDimColor": "#2B1B11",
             "cardGradientOpacity": 0.90,
-            "graphBorderColor": "#66FF8A00",
+            "graphBorderColor": "#88FF8A00",
             "graphLineColor": "#00E5FF",
-            "graphFillTop": "rgba(0,229,255,0.65)",
+            "graphFillTop": "rgba(0,229,255,0.80)",
             "graphFillHold": 0.30,
-            "graphFillMid": "rgba(0,229,255,0.18)",
-            "graphFillBottom": "rgba(0,229,255,0.02)",
-            "graphGrid": "rgba(0,229,255,0.20)",
-            "graphGlow": "rgba(0,229,255,0.35)",
-            "graphTitleFill": "rgba(255,200,100,0.85)",
-            "graphXAxisLabel": "rgba(255,180,80,0.6)",
-            "graphYAxisLabel": "rgba(100,220,255,0.6)",
-            "graphChargingTop": "rgba(76,175,80,0.55)",
-            "graphChargingMid": "rgba(76,175,80,0.18)",
-            "graphChargingBottom": "rgba(76,175,80,0.01)",
-            "graphNowLine": "rgba(255,180,60,0.45)",
-            "graphNowText": "rgba(255,180,60,0.65)",
-            "graphDayLabel": "rgba(255,243,224,0.5)",
+            "graphFillMid": "rgba(0,229,255,0.40)",
+            "graphFillBottom": "rgba(0,229,255,0.05)",
+            "graphGrid": "rgba(0,229,255,0.40)",
+            "graphGlow": "rgba(0,229,255,0.55)",
+            "graphTitleFill": "rgba(255,200,100,1.0)",
+            "graphXAxisLabel": "rgba(255,180,80,0.85)",
+            "graphYAxisLabel": "rgba(100,220,255,0.85)",
+            "graphChargingTop": "rgba(76,175,80,0.75)",
+            "graphChargingMid": "rgba(76,175,80,0.35)",
+            "graphChargingBottom": "rgba(76,175,80,0.05)",
+            "graphNowLine": "rgba(255,180,60,0.70)",
+            "graphNowText": "rgba(255,180,60,0.90)",
+            "graphDayLabel": "rgba(255,243,224,0.75)",
             "graphPrediction": "#FF5722",
             "gradeLow": "#00E676",
             "gradeMid": "#FFEA00",
@@ -293,23 +350,23 @@ QtObject {
             "surfaceColor": "#1A3A3A",
             "surfaceDimColor": "#0D2626",
             "cardGradientOpacity": 0.90,
-            "graphBorderColor": "#6600BCD4",
+            "graphBorderColor": "#8800BCD4",
             "graphLineColor": "#00E5FF",
-            "graphFillTop": "rgba(0,229,255,0.70)",
+            "graphFillTop": "rgba(0,229,255,0.85)",
             "graphFillHold": 0.30,
-            "graphFillMid": "rgba(0,229,255,0.18)",
-            "graphFillBottom": "rgba(0,229,255,0.02)",
-            "graphGrid": "rgba(0,188,212,0.25)",
-            "graphGlow": "rgba(0,229,255,0.40)",
-            "graphTitleFill": "rgba(0,229,255,0.85)",
-            "graphXAxisLabel": "rgba(0,229,255,0.6)",
-            "graphYAxisLabel": "rgba(0,229,255,0.6)",
-            "graphChargingTop": "rgba(0,230,118,0.55)",
-            "graphChargingMid": "rgba(0,230,118,0.18)",
-            "graphChargingBottom": "rgba(0,230,118,0.01)",
-            "graphNowLine": "rgba(255,255,255,0.45)",
-            "graphNowText": "rgba(255,255,255,0.65)",
-            "graphDayLabel": "rgba(224,247,250,0.5)",
+            "graphFillMid": "rgba(0,229,255,0.40)",
+            "graphFillBottom": "rgba(0,229,255,0.05)",
+            "graphGrid": "rgba(0,188,212,0.45)",
+            "graphGlow": "rgba(0,229,255,0.55)",
+            "graphTitleFill": "rgba(0,229,255,1.0)",
+            "graphXAxisLabel": "rgba(0,229,255,0.85)",
+            "graphYAxisLabel": "rgba(0,229,255,0.85)",
+            "graphChargingTop": "rgba(0,230,118,0.75)",
+            "graphChargingMid": "rgba(0,230,118,0.35)",
+            "graphChargingBottom": "rgba(0,230,118,0.05)",
+            "graphNowLine": "rgba(255,255,255,0.70)",
+            "graphNowText": "rgba(255,255,255,0.90)",
+            "graphDayLabel": "rgba(224,247,250,0.75)",
             "graphPrediction": "#FF5252",
             "gradeLow": "#00E676",
             "gradeMid": "#FFEA00",
@@ -333,7 +390,7 @@ QtObject {
     }
 
     function themeLabel(key) {
-        var labels = { "deepBlue": "Deep Blue", "ember": "Ember", "arctic": "Arctic" }
+        var labels = { "classic": "Classic", "deepBlue": "Deep Blue", "ember": "Ember", "arctic": "Arctic" }
         return labels[key] || key
     }
 }

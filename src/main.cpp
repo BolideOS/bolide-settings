@@ -19,6 +19,7 @@
 #include <QQuickView>
 #include <QScreen>
 #include <QtQml>
+#include <QElapsedTimer>
 #include <sys/utsname.h>
 
 #include <asteroidapp.h>
@@ -30,19 +31,26 @@
 
 int main(int argc, char *argv[])
 {
+    QElapsedTimer t; t.start();
     utsname buf;
     uname(&buf);
     QScopedPointer<QGuiApplication> app(AsteroidApp::application(argc, argv));
+    qWarning("[PROFILE] app created: %lld ms", t.elapsed());
     QScopedPointer<QQuickView> view(AsteroidApp::createView());
+    qWarning("[PROFILE] view created: %lld ms", t.elapsed());
     qmlRegisterType<VolumeControl>("org.bolide.settings", 1, 0, "VolumeControl");
     qmlRegisterType<TiltToWake>("org.bolide.settings", 1, 0, "TiltToWake");
     qmlRegisterType<TapToWake>("org.bolide.settings", 1, 0, "TapToWake");
     qmlRegisterType<SysInfo>("org.bolide.settings", 1, 0, "SysInfo");
     qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "org.bolide.theme", 1, 0, "Theme");
+    qWarning("[PROFILE] types registered: %lld ms", t.elapsed());
     view->setSource(QUrl("qrc:/qml/main.qml"));
+    qWarning("[PROFILE] QML loaded: %lld ms", t.elapsed());
     view->rootContext()->setContextProperty("qtVersion", QString(qVersion()));
     view->rootContext()->setContextProperty("kernelVersion", QString(buf.release));
     view->resize(app->primaryScreen()->size());
+    qWarning("[PROFILE] pre-show: %lld ms", t.elapsed());
     view->show();
+    qWarning("[PROFILE] shown: %lld ms", t.elapsed());
     return app->exec();
 }

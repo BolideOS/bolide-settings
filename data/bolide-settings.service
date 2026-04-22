@@ -1,0 +1,17 @@
+[Unit]
+Description=BolideOS Settings (preloaded)
+Requires=dbus.socket
+After=bolide-launcher.service
+ConditionUser=!root
+
+[Service]
+Type=simple
+Environment=QT_QPA_PLATFORM=wayland
+Environment=WAYLAND_DISPLAY=wayland-0
+Environment=QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+ExecStart=/usr/bin/bolide-settings
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

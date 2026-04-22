@@ -21,7 +21,14 @@ set(HEADERS
 	tilttowake.h
 	volumecontrol.h)
 
-add_library(bolide-settings ${SRC} ${HEADERS} resources.qrc 
+find_package(Qt5QuickCompiler)
+if(Qt5QuickCompiler_FOUND)
+    qtquick_compiler_add_resources(RESOURCES resources.qrc)
+else()
+    qt5_add_resources(RESOURCES resources.qrc)
+endif()
+
+add_library(bolide-settings ${SRC} ${HEADERS} ${RESOURCES}
     ${CMAKE_CURRENT_BINARY_DIR}/mceiface.h 
     ${CMAKE_CURRENT_BINARY_DIR}/mceiface.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/VolumeControl2.h 

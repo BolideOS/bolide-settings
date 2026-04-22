@@ -46,6 +46,18 @@ Item {
     property string healthConfidence: "unavailable"
     property int healthSampleCount: 0
 
+    // Estimate drain rate (%/hr) from profile power score when no observed data.
+    // score 0.0 (max_battery) → ~0.4%/hr (~10 days)
+    // score 0.5 (smartwatch)  → ~2.5%/hr (~40 hrs)
+    // score 1.0 (performance) → ~8%/hr   (~12 hrs)
+    // Uses exponential curve: rate = 0.4 * exp(3.0 * score)
+    function estimatedDrainRate() {
+        if (drainRatePerHour > 0) return drainRatePerHour
+        return 0.4 * Math.exp(3.0 * profilePowerScore)
+    }
+
+    property bool usingEstimate: drainRatePerHour <= 0 && !batteryCharging
+
     // Compute 0–1 power score from profile sensors + radios + system flags.
     // Higher values = more power consumption = warmer card color.
     //
@@ -111,6 +123,22 @@ Item {
         if (profile.system) {
             if (profile.system.always_on_display) score += 0.06
             if (profile.system.tilt_to_wake) score += 0.02
+        }
+
+        // --- CPU (contribute up to ~0.10) ---
+        if (profile.cpu) {
+            var govScores = { "powersave": 0.0, "auto": 0.03, "schedutil": 0.03,
+                              "ondemand": 0.05, "performance": 0.08 }
+            if (govScores[profile.cpu.governor] !== undefined)
+                score += govScores[profile.cpu.governor]
+            // More cores = more power
+            if (profile.cpu.max_cores <= 0) score += 0.02 // all cores
+        }
+
+        // --- Processes (contribute up to ~0.05) ---
+        if (profile.processes) {
+            if (profile.processes.audio_enabled) score += 0.02
+            if (profile.processes.pulseaudio !== "stopped") score += 0.02
         }
 
         return Math.min(score, 1.0)
@@ -266,7 +294,7 @@ Item {
                 [{"type": "i", "value": 168}],
                 function(result) {
                     var data = JSON.parse(result)
-                    if (data.length > 10) {
+                    if (data.length > 0) {
                         batteryHistory = data
                     } else if (isEmulator) {
                         batteryHistory = generateSimulatedHistory()
@@ -538,9 +566,63 @@ Item {
                 opacity: 0.5
             }
 
+            // --- Battery Estimate ---
+            Label {
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
+                text: {
+                    if (batteryCharging)
+                        //% "Charging"
+                        return "⚡ " + qsTrId("id-charging")
+                    var rate = estimatedDrainRate()
+                    if (rate <= 0 || batteryLevel <= 0)
+                        //% "Estimating…"
+                        return qsTrId("id-estimating")
+                    var hoursLeft = batteryLevel / rate
+                    var prefix = usingEstimate ? "~" : "~"
+                    if (hoursLeft >= 48) {
+                        var days = Math.round(hoursLeft / 24 * 10) / 10
+                        //% "~%1 days remaining"
+                        return qsTrId("id-days-remaining").arg(days)
+                    }
+                    var hrs = Math.floor(hoursLeft)
+                    var mins = Math.round((hoursLeft - hrs) * 60)
+                    //% "~%1h %2m remaining"
+                    return qsTrId("id-hours-remaining").arg(hrs).arg(mins)
+                }
+                font.pixelSize: Dims.l(7)
+                font.family: Theme.fontFamily
+                font.weight: Font.DemiBold
+                color: {
+                    if (batteryCharging) return Theme.healthGood
+                    var rate = estimatedDrainRate()
+                    if (rate <= 0) return Theme.textSecondary
+                    var hoursLeft = batteryLevel / rate
+                    if (hoursLeft >= 48) return Theme.healthGood
+                    if (hoursLeft >= 24) return Theme.healthOk
+                    return Theme.healthWarn
+                }
+                visible: serviceAvailable
+            }
+
+            // Show basis of estimate
+            Label {
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
+                text: usingEstimate
+                      //% "Based on %1 profile"
+                      ? qsTrId("id-estimate-based-profile").arg(activeProfileName)
+                      //% "Based on observed usage"
+                      : qsTrId("id-estimate-based-observed")
+                font.pixelSize: Dims.l(5)
+                font.family: Theme.fontFamily
+                opacity: 0.7
+                visible: serviceAvailable && !batteryCharging
+            }
+
             Item {
                 width: parent.width
-                height: Dims.h(35)
+                height: Dims.h(45)
 
                 Rectangle {
                     anchors.fill: parent
@@ -551,15 +633,31 @@ Item {
                     border.color: Theme.graphBorderColor
                     border.width: 1
 
-                    BatteryHistoryGraph {
+                    Column {
                         anchors.fill: parent
                         anchors.margins: 1
-                        historyData: batteryHistory
-                        currentLevel: batteryLevel
-                        drainRatePerHour: root.drainRatePerHour
-                        isCharging: batteryCharging
-                        //% "Battery Charge"
-                        titleText: qsTrId("id-battery-charge")
+
+                        Label {
+                            width: parent.width
+                            horizontalAlignment: Text.AlignHCenter
+                            //% "Battery Charge"
+                            text: qsTrId("id-battery-charge")
+                            font.pixelSize: Dims.l(6)
+                            font.family: Theme.fontFamily
+                            font.weight: Font.DemiBold
+                            color: Theme.textAccent
+                            topPadding: Dims.h(0.5)
+                            bottomPadding: Dims.h(0.5)
+                        }
+
+                        BatteryHistoryGraph {
+                            width: parent.width
+                            height: parent.height - y
+                            historyData: batteryHistory
+                            currentLevel: batteryLevel
+                            drainRatePerHour: root.drainRatePerHour
+                            isCharging: batteryCharging
+                        }
                     }
                 }
             }
@@ -570,7 +668,7 @@ Item {
 
                 Label {
                     text: batteryLevel + "%"
-                    font.pixelSize: Dims.l(8)
+                    font.pixelSize: Dims.l(9)
                     font.family: Theme.fontFamily
                     font.weight: Font.Normal
                     anchors.verticalCenter: parent.verticalCenter
@@ -578,7 +676,7 @@ Item {
 
                 Label {
                     text: drainRate
-                    font.pixelSize: Dims.l(4)
+                    font.pixelSize: Dims.l(6)
                     font.family: Theme.fontFamily
                     opacity: 0.6
                     anchors.verticalCenter: parent.verticalCenter
@@ -618,7 +716,7 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                     //% "Battery Health"
                     text: qsTrId("id-battery-health")
-                    font.pixelSize: Dims.l(5)
+                    font.pixelSize: Dims.l(8)
                     font.family: Theme.fontFamily
                 }
 
@@ -663,7 +761,7 @@ Item {
 
                     Label {
                         text: healthPercent > 0 ? healthPercent + "%" : "--"
-                        font.pixelSize: Dims.l(7)
+                        font.pixelSize: Dims.l(12)
                         font.family: Theme.fontFamily
                         font.weight: Font.Normal
                         color: healthPercent >= 80 ? Theme.healthGood :
@@ -680,9 +778,9 @@ Item {
                                     return learnedCapacityMah + " / " + designCapacityMah + " mAh"
                                 return ""
                             }
-                            font.pixelSize: Dims.l(3.5)
+                            font.pixelSize: Dims.l(6)
                             font.family: Theme.fontFamily
-                            opacity: 0.7
+                            opacity: 0.9
                             visible: text !== ""
                         }
                         Label {
@@ -692,9 +790,9 @@ Item {
                                     return qsTrId("id-charge-cycles").arg(cycleCount)
                                 return ""
                             }
-                            font.pixelSize: Dims.l(3)
+                            font.pixelSize: Dims.l(6)
                             font.family: Theme.fontFamily
-                            opacity: 0.5
+                            opacity: 0.8
                             visible: text !== ""
                         }
                     }
@@ -716,9 +814,9 @@ Item {
                             return qsTrId("id-health-accuracy-low")
                         return ""
                     }
-                    font.pixelSize: Dims.l(3)
+                    font.pixelSize: Dims.l(6)
                     font.family: Theme.fontFamily
-                    opacity: 0.4
+                    opacity: 0.8
                     visible: text !== "" && healthPercent > 0
                 }
 
@@ -742,9 +840,9 @@ Item {
                         //% "Battery is significantly degraded"
                         return qsTrId("id-health-degraded")
                     }
-                    font.pixelSize: Dims.l(3)
+                    font.pixelSize: Dims.l(6)
                     font.family: Theme.fontFamily
-                    opacity: 0.5
+                    opacity: 0.85
                     visible: text !== ""
                 }
 

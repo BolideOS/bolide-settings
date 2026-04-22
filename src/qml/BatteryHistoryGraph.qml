@@ -50,21 +50,11 @@ Canvas {
 
         if (width <= 0 || height <= 0) return
 
-        var leftPad   = width * 0.10
+        var leftPad   = width * 0.14
         var rightPad  = width * 0.03
-        var topPad    = height * 0.25
-        var bottomPad = height * 0.20
+        var topPad    = height * 0.08
+        var bottomPad = height * 0.22
 
-        // --- Title text in the top padding area ---
-        if (titleText.length > 0) {
-            ctx.save()
-            ctx.font = Math.round(height * Theme.graphTitleSizeFactor) + "px " + Theme.fontFamily
-            ctx.fillStyle = Theme.graphTitleFill
-            ctx.textAlign = "center"
-            ctx.textBaseline = "top"
-            ctx.fillText(titleText, width / 2, height * 0.04)
-            ctx.restore()
-        }
         var chartW = width - leftPad - rightPad
         var chartH = height - topPad - bottomPad
         var chartBottom = topPad + chartH
@@ -103,7 +93,7 @@ Canvas {
         }
 
         // --- Y-axis labels ---
-        var fontSize = Math.max(8, Math.round(height * 0.10))
+        var fontSize = Math.max(10, Math.round(height * 0.18))
         ctx.fillStyle = Theme.graphYAxisLabel
         ctx.font = fontSize + "px " + Theme.fontFamily
         ctx.textAlign = "right"
@@ -112,10 +102,12 @@ Canvas {
         ctx.fillText("50",  leftPad - 3, levelToY(50))
 
         // --- Day labels ---
+        var dayFontSize = Math.max(10, Math.round(height * 0.16))
+        ctx.font = dayFontSize + "px " + Theme.fontFamily
         ctx.fillStyle = Theme.graphXAxisLabel
         ctx.textAlign = "center"
         ctx.textBaseline = "top"
-        var dayAbbr = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+        var dayAbbr = ["S","M","T","W","T","F","S"]
         for (var d = 0; d < 7; d++) {
             var dayMid = startTime + d * 24 * 3600 + 12 * 3600
             var dx = timeToX(dayMid)
@@ -132,6 +124,8 @@ Canvas {
         ctx.lineTo(nowX, chartBottom)
         ctx.stroke()
 
+        var nowFontSize = Math.max(10, Math.round(height * 0.16))
+        ctx.font = nowFontSize + "px " + Theme.fontFamily
         ctx.fillStyle = Theme.graphNowText
         ctx.textAlign = "center"
         ctx.textBaseline = "bottom"
@@ -263,14 +257,40 @@ Canvas {
                 ctx.moveTo(pts[0].x, pts[0].y)
                 traceSmoothSegments(ctx, pts)
                 ctx.strokeStyle = Theme.graphLineColor
-                ctx.lineWidth = 2
+                ctx.lineWidth = 2.5
                 ctx.stroke()
 
             } else if (visible.length === 1) {
+                // Single data point — draw a horizontal line from point to "now"
                 var px = timeToX(Math.max(visible[0].timestamp, startTime))
                 var py = levelToY(visible[0].level)
+                var endX = Math.min(nowX, leftPad + chartW)
+
+                // Gradient fill under the line
                 ctx.beginPath()
-                ctx.arc(px, py, 3, 0, 2 * Math.PI)
+                ctx.moveTo(px, chartBottom)
+                ctx.lineTo(px, py)
+                ctx.lineTo(endX, py)
+                ctx.lineTo(endX, chartBottom)
+                ctx.closePath()
+                var sGrad = ctx.createLinearGradient(0, py, 0, chartBottom)
+                sGrad.addColorStop(0.0, Theme.graphFillTop)
+                sGrad.addColorStop(0.5, Theme.graphFillMid)
+                sGrad.addColorStop(1.0, Theme.graphFillBottom)
+                ctx.fillStyle = sGrad
+                ctx.fill()
+
+                // Visible line
+                ctx.beginPath()
+                ctx.moveTo(px, py)
+                ctx.lineTo(endX, py)
+                ctx.strokeStyle = Theme.graphLineColor
+                ctx.lineWidth = 2.5
+                ctx.stroke()
+
+                // Dot at current position
+                ctx.beginPath()
+                ctx.arc(endX, py, 4, 0, 2 * Math.PI)
                 ctx.fillStyle = Theme.graphLineColor
                 ctx.fill()
             }

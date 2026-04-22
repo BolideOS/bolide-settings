@@ -39,6 +39,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bolide-settings.in
 install(PROGRAMS ${CMAKE_BINARY_DIR}/bolide-settings
 	DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/bolide-settings.service
+	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user)
+
 build_translations(i18n)
 generate_desktop(${CMAKE_SOURCE_DIR} bolide-settings)
 
