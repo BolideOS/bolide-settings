@@ -33,15 +33,11 @@ Item {
 
     // ConfigurationValue for toggle arrays
     ConfigurationValue {
-        id: fixedToggles
-        key: "/desktop/bolide/quickpanel/fixed"
-        defaultValue: ["lockButton", "settingsButton"]
-    }
-
-    ConfigurationValue {
         id: sliderToggles
         key: "/desktop/bolide/quickpanel/slider"
         defaultValue: [
+            "lockButton",
+            "settingsButton",
             "brightnessToggle",
             "bluetoothToggle",
             "hapticsToggle",
@@ -96,7 +92,6 @@ Item {
     property real rowHeight: Dims.h(18)
     property int draggedItemIndex: -1
     property int targetIndex: -1
-    property int fixedRowLength: 2
     property real dragYOffset: 0
     property var draggedToggle: null
     property var particleDesigns: ["diamonds", "bubbles", "logos", "flashes"]
@@ -148,56 +143,19 @@ Item {
         }
     }
 
-    // Populate the model with fixed and slider toggles
+    // Populate the model with all toggles in a single flat list
     function refreshModel() {
         slotModel.clear();
 
-        const fixedTogglesArray = fixedToggles.value;
-        const sliderTogglesArray = sliderToggles.value;
+        const togglesArray = sliderToggles.value;
 
-        //% "Fixed Row"
-        slotModel.append({ type: "label", labelText: qsTrId("id-fixed-row"), toggleId: "", listView: "" });
-        // Adds available fixed row toggles first
-        for (let i = 0; i < fixedTogglesArray.length && i < fixedRowLength; i++) {
-            const toggleId = fixedTogglesArray[i];
-            const toggle = toggleOptions[toggleId];
-            if (!toggle) continue;
+        //% "Toggles"
+        slotModel.append({ type: "label", labelText: qsTrId("id-toggles"), toggleId: "", listView: "" });
 
-            slotModel.append({
-                type: "toggle",
-                toggleId: toggleId,
-                listView: "fixed",
-                labelText: "",
-                toggle: toggle
-            });
-        }
-
-        // In case less than fixedRowLength, fill with any other toggle
-        const missingFixedRowToggles = fixedRowLength - countFixedToggles();
-        for (let i = 0; i < missingFixedRowToggles; i++) {
-            for (let t = 0; t < toggleOptions.length; t++) {
-                const toggleId = toggleOptions[t].id;
-                if (isToggleInRow(toggleId)) continue;
-                const toggle = toggleOptions[toggleId];
-                if (!toggle) continue;
-
-                slotModel.append({
-                    type: "toggle",
-                    toggleId: toggleId,
-                    listView: "fixed",
-                    labelText: "",
-                    toggle: toggle
-                });
-                break;
-            }
-        }
-        //% "Sliding Row"
-        slotModel.append({ type: "label", labelText: qsTrId("id-sliding-row"), toggleId: "", listView: "" });
-        // Adds available slider row toggles first. Ensure it doesn't already exist in the fixed row
-        for (let i = 0; i < sliderTogglesArray.length; i++) {
-            const toggleId = sliderTogglesArray[i];
-
-            if (!toggleId || isToggleInRow(toggleId)) continue;
+        // Add toggles in saved order
+        for (let i = 0; i < togglesArray.length; i++) {
+            const toggleId = togglesArray[i];
+            if (!toggleId) continue;
 
             const toggle = toggleOptions[toggleId];
             if (!toggle) continue;
@@ -211,22 +169,23 @@ Item {
             });
         }
 
-        // Adds remaining toggles to sliding row
-        for (let t = 0; t < toggleOptions.length; t++) {
-            const toggleId = toggleOptions[t].id;
-            if (isToggleInRow(toggleId)) continue;
+        // Add any remaining toggles not yet in the list
+        for (var key in toggleOptions) {
+            if (!toggleOptions.hasOwnProperty(key)) continue;
+            if (isToggleInRow(key)) continue;
 
-            const toggle = toggleOptions[toggleId];
+            const toggle = toggleOptions[key];
             if (!toggle) continue;
 
             slotModel.append({
                 type: "toggle",
-                toggleId: toggleId,
+                toggleId: key,
                 listView: "slider",
                 labelText: "",
                 toggle: toggle
             });
         }
+
         //% "Options"
         slotModel.append({ type: "label", labelText: qsTrId("id-options"), toggleId: "", listView: "" });
         //% "Battery Meter aligned to bottom?"
@@ -244,62 +203,15 @@ Item {
         listLoader.active = true;
     }
 
-    // Count the number of fixed toggles in the model
-    function countFixedToggles() {
-        let count = 0;
-        for (let i = 1; i < slotModel.count; i++) {
+    // Check if a toggle is in the list
+    function isToggleInRow(toggleId) {
+        for (let i = 0; i < slotModel.count; i++) {
             const item = slotModel.get(i);
-            if (item.type === "toggle" && item.listView === "fixed") {
-                count++;
-            }
-            if (item.type === "label" && item.labelText === qsTrId("id-sliding-row")) {
-                break;
-            }
-        }
-        return count;
-    }
-
-    // Check if a toggle is in the fixed row
-    function isToggleInFixedRow(toggleId) {
-        for (let i = 1; i < slotModel.count; i++) {
-            const item = slotModel.get(i);
-            if (item.type === "label" && item.labelText === qsTrId("id-sliding-row")) {
-                break;
-            }
             if (item.type === "toggle" && item.toggleId === toggleId) {
                 return true;
             }
         }
         return false;
-    }
-
-    // Check if a toggle is in any row
-    function isToggleInRow(toggleId) {
-        for (let i = 1; i < slotModel.count; i++) {
-            const item = slotModel.get(i);
-
-            if (item.type !== "toggle") {
-                continue;
-            }
-
-            if (item.toggleId !== toggleId) {
-                continue;
-            }
-
-            return true;
-        }
-        return false;
-    }
-
-    // Find the index of the slider label
-    function findSliderLabelIndex() {
-        for (let i = 0; i < slotModel.count; i++) {
-            const item = slotModel.get(i);
-            if (item.type === "label" && item.labelText === qsTrId("id-sliding-row")) {
-                return i;
-            }
-        }
-        return null;
     }
 
     // Find the index of the options label
@@ -310,61 +222,32 @@ Item {
                 return i;
             }
         }
-        return null;
-    }
-
-    // Ensure the slider label stays at the correct position
-    function ensureSliderLabelPosition() {
-        const sliderIndex = findSliderLabelIndex();
-        if (sliderIndex === null) return;
-
-        // Ensure slider label is right after the fixed row
-        slotModel.move(sliderIndex, fixedRowLength + 1, 1);
+        return slotModel.count;
     }
 
     // Validate drop position for drag-and-drop
     function isValidDropPosition(dropIndex) {
+        if (dropIndex < 1) return false;
         const item = slotModel.get(dropIndex);
-        if (item.type !== "toggle") {
-            return false;
-        }
-
-        const sliderLabelIndex = findSliderLabelIndex();
+        if (item.type !== "toggle") return false;
         const optionsIndex = findOptionsLabelIndex();
-
-        if (dropIndex === 0 || dropIndex === sliderLabelIndex || dropIndex >= optionsIndex) {
-            return false;
-        }
-
+        if (dropIndex >= optionsIndex) return false;
         return true;
     }
 
     // Save the current configuration
     function saveConfiguration() {
-        let fixedArray = [];
-        let sliderArray = [];
+        let toggleArray = [];
 
-        for (let i = 1; i < slotModel.count; i++) {
-            const item = slotModel.get(i);
-            if (item.type === "label" && item.labelText === qsTrId("id-sliding-row")) {
-                break;
-            }
-            if (item.type === "toggle") {
-                fixedArray.push(item.toggleId);
-            }
-        }
-
-        const sliderStart = findSliderLabelIndex() + 1;
         const optionsIndex = findOptionsLabelIndex();
-        for (let i = sliderStart; i < optionsIndex; i++) {
+        for (let i = 1; i < optionsIndex; i++) {
             const item = slotModel.get(i);
-            if (item.type !== "toggle") continue;
-
-            sliderArray.push(item.toggleId);
+            if (item.type === "toggle") {
+                toggleArray.push(item.toggleId);
+            }
         }
 
-        fixedToggles.value = fixedArray;
-        sliderToggles.value = sliderArray;
+        sliderToggles.value = toggleArray;
     }
 
     // Handle drag-and-drop movement
@@ -373,31 +256,17 @@ Item {
             return;
         }
 
-        const sliderLabelIndex = findSliderLabelIndex();
         const optionsLabelIndex = findOptionsLabelIndex();
 
-        if (targetIndex === 0 ||
-            targetIndex === sliderLabelIndex ||
-            targetIndex >= optionsLabelIndex ||
-            !isValidDropPosition(targetIndex)) {
+        if (targetIndex === 0 || targetIndex >= optionsLabelIndex || !isValidDropPosition(targetIndex)) {
             return;
         }
 
         dragProxy.text = draggedToggle.name;
         dragProxy.icon = draggedToggle.icon;
 
-        if ((draggedItemIndex < sliderLabelIndex && targetIndex < sliderLabelIndex) ||
-            (draggedItemIndex > sliderLabelIndex && targetIndex > sliderLabelIndex && targetIndex < optionsLabelIndex)) {
-            slotModel.move(draggedItemIndex, targetIndex, 1);
-            slotModel.setProperty(targetIndex, "listView", targetIndex < sliderLabelIndex ? "fixed" : "slider");
-            draggedItemIndex = targetIndex;
-        } else if ((draggedItemIndex > sliderLabelIndex && targetIndex < sliderLabelIndex) ||
-                   (draggedItemIndex < sliderLabelIndex && targetIndex > sliderLabelIndex && targetIndex < optionsLabelIndex)) {
-            slotModel.move(draggedItemIndex, targetIndex, 1);
-            slotModel.setProperty(targetIndex, "listView", targetIndex < sliderLabelIndex ? "fixed" : "slider");
-            draggedItemIndex = targetIndex;
-            ensureSliderLabelPosition();
-        }
+        slotModel.move(draggedItemIndex, targetIndex, 1);
+        draggedItemIndex = targetIndex;
 
         saveConfiguration();
         listLoader.item.forceLayout();
@@ -771,24 +640,13 @@ Item {
 
                         let dropIndex = itemUnder.visualIndex;
                         const optionsIndex = findOptionsLabelIndex();
-                        const sliderLabelIndex = findSliderLabelIndex();
 
-                        if (dropIndex > sliderLabelIndex && dropIndex >= optionsIndex - 1) {
-                            dropIndex -= 1;
+                        if (dropIndex >= optionsIndex) {
+                            dropIndex = optionsIndex - 1;
                         }
 
                         if (dropIndex !== draggedItemIndex && isValidDropPosition(dropIndex)) {
-                            const targetY = itemUnder.y + itemUnder.height / 2;
-                            if (dropY < targetY && dropIndex > 0) {
-                                const prevItem = slotModel.get(dropIndex - 1);
-                                if (prevItem.type !== "label" &&
-                                    ((prevItem.listView === "fixed" && dropIndex < sliderLabelIndex) ||
-                                        (prevItem.listView === "slider" && dropIndex > sliderLabelIndex))) {
-                                    dropIndex -= 1;
-                                }
-                            }
-
-                            if (isValidDropPosition(dropIndex) && dropIndex !== targetIndex) {
+                            if (dropIndex !== targetIndex) {
                                 targetIndex = dropIndex;
                                 moveItems();
                             }
@@ -820,10 +678,9 @@ Item {
 
                         let dropIndex = itemUnder.visualIndex;
                         const optionsIndex = findOptionsLabelIndex();
-                        const sliderLabelIndex = findSliderLabelIndex();
 
-                        if (dropIndex > sliderLabelIndex && dropIndex >= optionsIndex - 1) {
-                            dropIndex -= 1;
+                        if (dropIndex >= optionsIndex) {
+                            dropIndex = optionsIndex - 1;
                         }
 
                         if (dropIndex === draggedItemIndex || !isValidDropPosition(dropIndex)) {
@@ -848,31 +705,17 @@ Item {
                             abortDrag();
                         } else if (type === "toggle" && toggleId && pressDuration < 500) {
                             const newEnabled = Object.assign({}, toggleEnabled.value);
-                            const isFixedToggle = isToggleInFixedRow(toggleId);
-                            const sliderLabelIndex = findSliderLabelIndex();
+                            // Ensure at least 2 toggles remain enabled
                             const optionsLabelIndex = findOptionsLabelIndex();
-                            let fixedActiveCount = 0;
-                            for (let i = 1; i < sliderLabelIndex; i++) {
+                            let activeCount = 0;
+                            for (let i = 1; i < optionsLabelIndex; i++) {
                                 const item = slotModel.get(i);
                                 if (item.type === "toggle" && toggleEnabled.value[item.toggleId]) {
-                                    fixedActiveCount++;
+                                    activeCount++;
                                 }
                             }
-                            let sliderActiveCount = 0;
-                            for (let i = sliderLabelIndex + 1; i < optionsLabelIndex; i++) {
-                                const item = slotModel.get(i);
-                                if (item.type === "toggle" && toggleEnabled.value[item.toggleId]) {
-                                    sliderActiveCount++;
-                                }
-                            }
-                            if (newEnabled[toggleId]) {
-                                // Ensure that a toggle is always enabled
-                                if (isFixedToggle && fixedActiveCount <= 1) {
-                                    return;
-                                }
-                                if (!isFixedToggle && sliderActiveCount <= 2) {
-                                    return;
-                                }
+                            if (newEnabled[toggleId] && activeCount <= 2) {
+                                return;
                             }
                             newEnabled[toggleId] = !newEnabled[toggleId];
                             toggleEnabled.value = newEnabled;
